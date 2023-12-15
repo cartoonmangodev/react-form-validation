@@ -1,5 +1,5 @@
 {
-  "name": "react-form-handler",
+  "name": "react-form-validation-handler",
   "version": "0.0.1",
   "description": "Easy way to handle form validation",
   "main": "./lib/index.js",
