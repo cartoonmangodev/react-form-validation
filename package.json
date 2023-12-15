@@ -1,5 +1,5 @@
 {
-  "name": "react-form-validation-handler",
+  "name": "@cartoonmangodev/react-form",
   "version": "0.0.1",
   "description": "Easy way to handle form validation",
   "main": "./lib/index.js",
@@ -16,6 +16,7 @@
     "form",
     "form-hook",
     "form-validation-handler",
+    "react-form",
     "react-form-hook",
     "react-form-validation",
     "react-form-handler",
