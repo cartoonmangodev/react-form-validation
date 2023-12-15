@@ -1427,7 +1427,7 @@ const formValidationHandler = ({
   };
 
   return {
-    useFormHook: useFormValidationHook,
+    useForm: useFormValidationHook,
     formHandler: _formValidationHandler,
     useFormRef,
   };
