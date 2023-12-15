@@ -8,3 +8,5 @@ export const TYPE_FUNCTION = "function";
 export const TYPE_ERROR = "error";
 export const TYPE_SYMBOL = "symbol";
 export const TYPE_GENERATOR_FUNCTION = "generatorFunction";
+
+export * from "./FormValidation/constants";

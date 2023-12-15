@@ -1,32 +1,32 @@
-import nodeResolve from '@rollup/plugin-node-resolve';
-import babel from 'rollup-plugin-babel';
+import nodeResolve from "@rollup/plugin-node-resolve";
+import babel from "rollup-plugin-babel";
 // import replace from '@rollup/plugin-replace';
 // import typescript from 'rollup-plugin-typescript2';
-import { terser } from 'rollup-plugin-terser';
+import { terser } from "rollup-plugin-terser";
 
-import pkg from './package.json';
+import pkg from "./package.json";
 
-const extensions = ['.js'];
+const extensions = [".js"];
 // const noDeclarationFiles = { compilerOptions: { declaration: false } };
 
-const babelRuntimeVersion = pkg.dependencies['@babel/runtime'].replace(
+const babelRuntimeVersion = pkg.dependencies["@babel/runtime"].replace(
   /^[^0-9]*/,
-  '',
+  ""
 );
 
-const makeExternalPredicate = externalArr => {
+const makeExternalPredicate = (externalArr) => {
   if (externalArr.length === 0) {
     return () => false;
   }
-  const pattern = new RegExp(`^(${externalArr.join('|')})($|/)`);
-  return id => pattern.test(id);
+  const pattern = new RegExp(`^(${externalArr.join("|")})($|/)`);
+  return (id) => pattern.test(id);
 };
 
 export default [
   // CommonJS
   {
-    input: 'src/index.js',
-    output: { file: 'lib/index.js', format: 'cjs', indent: false },
+    input: "src/index.js",
+    output: { file: "lib/index.js", format: "cjs", indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
@@ -40,15 +40,15 @@ export default [
       babel({
         extensions,
         plugins: [
-          ['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }],
+          ["@babel/plugin-transform-runtime", { version: babelRuntimeVersion }],
         ],
         runtimeHelpers: true,
       }),
     ],
   },
   {
-    input: 'src/util.js',
-    output: { file: 'utils/index.js', format: 'cjs', indent: false },
+    input: "src/utils.js",
+    output: { file: "utils/index.js", format: "cjs", indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
@@ -62,15 +62,15 @@ export default [
       babel({
         extensions,
         plugins: [
-          ['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }],
+          ["@babel/plugin-transform-runtime", { version: babelRuntimeVersion }],
         ],
         runtimeHelpers: true,
       }),
     ],
   },
   {
-    input: 'src/constants.js',
-    output: { file: 'constants/index.js', format: 'cjs', indent: false },
+    input: "src/constants.js",
+    output: { file: "constants/index.js", format: "cjs", indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
@@ -84,7 +84,7 @@ export default [
       babel({
         extensions,
         plugins: [
-          ['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }],
+          ["@babel/plugin-transform-runtime", { version: babelRuntimeVersion }],
         ],
         runtimeHelpers: true,
       }),
