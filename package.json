@@ -1,0 +1,135 @@
+{
+  "name": "react-boilerplate-redux-saga-hoc",
+  "version": "1.10.20",
+  "description": "Easy ways to handle api calls,redux,saga...etc",
+  "main": "./lib/index.js",
+  "unpkg": "./lib/index.js",
+  "module": "./lib/index.js",
+  "files": [
+    "lib",
+    "utils",
+    "constants"
+  ],
+  "keywords": [
+    "react",
+    "reactjs",
+    "redux",
+    "saga",
+    "redux-saga",
+    "reducer",
+    "constant",
+    "hoc",
+    "react-redux",
+    "actions",
+    "react-boilerplate",
+    "react-boilerplate-redux-saga-hoc"
+  ],
+  "sideEffects": false,
+  "homepage": "https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs",
+  "bugs": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc.git"
+  },
+  "release": {
+    "branches": [
+      "1.x",
+      "master",
+      {
+        "name": "next",
+        "prerelease": true
+      }
+    ]
+  },
+  "scripts": {
+    "build:prod": "webpack --mode production",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
+    "build:es": "babel src --out-dir es",
+    "build:umd": "cross-env NODE_ENV=development rollup -c -o dist/react-boilerplate-redux-saga-hoc.js",
+    "build:umd:min": "cross-env NODE_ENV=production rollup -c -o dist/react-boilerplate-redux-saga-hoc.min.js",
+    "build:production": "NODE_ENV=production rollup -c",
+    "build": "npm run build:commonjs && npm run build:es",
+    "clean": "rimraf lib dist es coverage",
+    "format": "prettier --write \"{src,test}/**/*.{js,ts}\" index.d.ts \"docs/**/*.md\"",
+    "lint": "eslint src test/utils test/components",
+    "prepare": "npm run clean && npm run build:production",
+    "pretest": "npm run lint",
+    "test": "jest",
+    "coverage": "codecov"
+  },
+  "author": "Chrissie Fernando",
+  "license": "MIT",
+  "peerDependencies": {
+    "axios": "^0.24.0 || ^0.27.2",
+    "react-redux": "^7.0.2 || ^8.0.4",
+    "react": "^16.8 || ^17.0 || ^18.0",
+    "react-dom": "^16.8 || ^17.0 || ^18.0",
+    "redux": "^4 || ^5.0.0-beta.0 || ^5",
+    "redux-saga": "^0.16.2 || ^1.2.3",
+    "reselect": "^4.0.0"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.11.2",
+    "events": "^3.3.0",
+    "fast-deep-equal": "^3.1.3",
+    "lodash": "^4.17.21",
+    "hoist-non-react-statics": "^3.3.2",
+    "invariant": "^2.2.4",
+    "query-string": "^7.1.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-decorators": "^7.4.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
+    "@babel/plugin-transform-react-display-name": "^7.2.0",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/preset-react": "^7.18.6",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-replace": "^2.3.3",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.7.1",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-transform-async-to-promises": "^0.8.15",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "codecov": "^3.3.0",
+    "create-react-class": "^15.6.3",
+    "cross-env": "^5.2.0",
+    "es3ify": "^0.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.4",
+    "glob": "^7.1.3",
+    "jest": "^24.7.1",
+    "jest-dom": "^3.1.3",
+    "prettier": "^1.16.4",
+    "react-testing-library": "^5.9.0",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.8.0",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^9.3.3",
+    "rollup-plugin-node-resolve": "^4.0.1",
+    "rollup-plugin-peer-deps-external": "^2.2.3",
+    "rollup-plugin-replace": "^2.1.1",
+    "rollup-plugin-size": "^0.2.2",
+    "rollup-plugin-terser": "^4.0.4",
+    "rollup-plugin-typescript2": "^0.27.2",
+    "rollup-plugin-visualizer": "^4.1.0",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "browserify": {
+    "transform": [
+      "loose-envify"
+    ]
+  }
+}
