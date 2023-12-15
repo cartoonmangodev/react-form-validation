@@ -1,15 +1,13 @@
-import {
-  TYPE_NULL,
-  TYPE_UNDEFINED,
-  TYPE_STRING,
-  TYPE_ARRAY,
-  TYPE_BOOLEAN,
-  TYPE_OBJECT,
-  TYPE_FUNCTION,
-  TYPE_ERROR,
-  TYPE_SYMBOL,
-  TYPE_GENERATOR_FUNCTION,
-} from "../../constants";
+const TYPE_NULL = "null";
+const TYPE_UNDEFINED = "undefined";
+const TYPE_STRING = "string";
+const TYPE_ARRAY = "array";
+const TYPE_BOOLEAN = "boolean";
+const TYPE_OBJECT = "object";
+const TYPE_FUNCTION = "function";
+const TYPE_ERROR = "error";
+const TYPE_SYMBOL = "symbol";
+const TYPE_GENERATOR_FUNCTION = "generatorFunction";
 
 const type = {
   "[object Null]": TYPE_NULL,

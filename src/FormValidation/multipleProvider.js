@@ -10,14 +10,13 @@ import React, {
   useContext,
 } from "react";
 import FormContext, { FormRefContext } from "./context";
-import { newObject, typeOf } from "../utils";
+import { newObject, typeOf, newFormArray } from "../utils";
 import { TYPE_OBJECT } from "../constants";
 import {
   SCHEMA_CONFIG,
   IS_FORMREF,
   IS_MULTIPLE,
   IS_LITERAL_VALUE,
-  newFormArray,
 } from "./constants";
 
 const convertToOriginalData = (value) =>
@@ -161,7 +160,7 @@ export default forwardRef(
         if (typeof index === "number" && typeof currentIndex === "number") {
           __val.splice(currentIndex, 1);
           __val.splice(index, 0, __value);
-          ___val[key] = __val;
+          ___val[currentIndex] = __val;
         }
         return ___val;
       });

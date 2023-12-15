@@ -9,4 +9,14 @@ export const TYPE_ERROR = "error";
 export const TYPE_SYMBOL = "symbol";
 export const TYPE_GENERATOR_FUNCTION = "generatorFunction";
 
-export * from "./FormValidation/constants";
+export {
+  IS_FORMREF,
+  IS_LITERAL_VALUE,
+  IS_MULTIPLE,
+  IS_SCHEMA,
+  SCHEMA_CONFIG,
+  ON_CHANGE,
+  ON_BLUR,
+  VALUE,
+  ERROR,
+} from "./FormValidation/constants";

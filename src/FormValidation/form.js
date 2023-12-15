@@ -1399,11 +1399,7 @@ const formValidationHandler = ({
     };
   };
 
-  const useFormValidationHook = ({
-    renderForm,
-    renderFormOnChange,
-    ...props
-  }) => {
+  const useFormValidationHook = ({ renderForm, ...props }) => {
     const [_renderForm, setRenderForm] = useState();
     const [{ formRef, formId }] = useState(() =>
       _formValidationHandler({
@@ -1431,13 +1427,13 @@ const formValidationHandler = ({
   };
 
   return {
-    useFormValidationHook,
-    formValidationHandler: _formValidationHandler,
+    useFormHook: useFormValidationHook,
+    formHandler: _formValidationHandler,
     useFormRef,
   };
 };
 
-export const FormValidationHandlerProvider = formValidationHandler;
+export const FormProvider = formValidationHandler;
 /* example
   FORM_CONFIG = {
     name: {
@@ -1464,41 +1460,17 @@ export const FormValidationHandlerProvider = formValidationHandler;
  * errors
  * values
  */
-/**
-  const { formRef } = useFormValidationHandlerHook({
-    VALIDATOR: validator // custom validator <optional>
-    FORM_CONFIG: FORM_DATA_CONFIG.cab_once,
-    initialValues: {
-      entry_date: () => new Date(),
-      entry_time: () => new Date(),
-    },
-  });
 
-  formRef.values.<key>
-  formRef.errors.<key>
-  <input {...commonInputProps(<key>)} />
-  const onChange = () => {
-    formRef.onChangeValues(<value>, <key>);
-  }
-  const onBlur = () => {
-    formRef.onBlurValues(<value>, <key>);
-  }
-  onClick={() => {
-    formRef.modifyFormConfig(
-      FORM_DATA_CONFIG.cab_once,
-      true, // Reset and set value
-      {
-        entry_time: new Date(),
-        entry_date: new Date(),
-        repeat_days: '',
-      }, // INITIAL_VALUE
-    );
-  }}
-  const { values: _values, isError } = formRef.validateForm({
-      isSetError: true,
-      formConfig: __FORM_CONFIG = {}, // optional
-      values: __values = {}, // optional
-      errors: __errors = {}, // optional
-      isNewFormConfig, // optional <Boolean>
-  });
-*/
+// const {
+//   useFormValidationHook,
+//   formValidationHandler,
+//   useFormRef,
+// } = FormValidationHandlerProvider({
+//   VALIDATOR: null,
+//   ON_CHANGE_KEY: "onChange",
+//   ON_BLUR_KEY: "onBlur",
+//   VALUE: "value",
+//   ERROR: "error",
+// });
+
+// export { useFormValidationHook, formValidationHandler, useFormRef,  };

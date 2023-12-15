@@ -1,5 +1,6 @@
-import { newObject } from "../utils";
+import { newObject, typeOf } from "../utils";
 import { IS_MULTIPLE, IS_SCHEMA, SCHEMA_CONFIG } from "./constants";
+import invariant from "invariant";
 
 export const _getPlatformBasedFieldValue = (e) =>
   e &&
@@ -179,3 +180,28 @@ export function _deepCopy(src, /* INTERNAL */ _visited, _copiesVisited) {
   }
   return dest;
 }
+
+const checkKey = (key, message, dataType) => {
+  const convertArray = Array.isArray(dataType) ? dataType : [dataType];
+  invariant(convertArray.includes(typeOf(key)), message);
+};
+
+const checkIsValidConfig = (config) => config[IS_SCHEMA] || config[IS_MULTIPLE];
+
+export const newSchema = (config) => {
+  if (checkIsValidConfig(config || {}))
+    checkKey(false, "(newSchema) Invalid form schema", "object");
+  return {
+    [IS_SCHEMA]: true,
+    [SCHEMA_CONFIG]: config,
+  };
+};
+
+export const newFormArray = (config) => {
+  if (config[IS_MULTIPLE])
+    checkKey(false, "(newMultiple) Invalid form schema", "object");
+  return {
+    [IS_MULTIPLE]: true,
+    [SCHEMA_CONFIG]: config[IS_SCHEMA] ? config._config : config,
+  };
+};

@@ -9,7 +9,8 @@ import React, {
   useContext,
 } from "react";
 import FormContext, { FormRefContext } from "./context";
-import { IS_FORMREF, newSchema } from "./constants";
+import { IS_FORMREF } from "./constants";
+import { newSchema } from "./utils";
 
 const getFormRef = (_formRef, id) => {
   let formRef = _formRef;
@@ -129,10 +130,8 @@ export default forwardRef(
       };
     }, [formRef._formId_]);
 
-    rootFormRef._formRef.__formRef__.values =
-      rootFormRef._formRef.__formRef__.getValues();
-    rootFormRef._formRef.__formRef__.errors =
-      rootFormRef._formRef.__formRef__.getErrors();
+    rootFormRef._formRef.__formRef__.values = rootFormRef._formRef.__formRef__.getValues();
+    rootFormRef._formRef.__formRef__.errors = rootFormRef._formRef.__formRef__.getErrors();
 
     return (
       <FormContext.Provider
