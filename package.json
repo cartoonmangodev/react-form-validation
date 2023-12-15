@@ -1,7 +1,7 @@
 {
   "name": "react-boilerplate-redux-saga-hoc",
-  "version": "1.10.20",
-  "description": "Easy ways to handle api calls,redux,saga...etc",
+  "version": "0.0.1",
+  "description": "Easy way to handle form validation",
   "main": "./lib/index.js",
   "unpkg": "./lib/index.js",
   "module": "./lib/index.js",
@@ -13,23 +13,18 @@
   "keywords": [
     "react",
     "reactjs",
-    "redux",
-    "saga",
-    "redux-saga",
-    "reducer",
-    "constant",
-    "hoc",
-    "react-redux",
-    "actions",
+    "form",
+    "form-hook",
+    "form-validation-handler",
     "react-boilerplate",
     "react-boilerplate-redux-saga-hoc"
   ],
   "sideEffects": false,
-  "homepage": "https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs",
-  "bugs": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc/issues",
+  "homepage": "https://github.com/cartoonmangodev/react-form-validation",
+  "bugs": "https://github.com/cartoonmangodev/react-form-validation/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc.git"
+    "url": "https://github.com/cartoonmangodev/react-form-validation.git"
   },
   "release": {
     "branches": [
