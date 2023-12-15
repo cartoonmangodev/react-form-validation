@@ -1,6 +1,6 @@
 {
   "name": "@cartoonmangodev/react-form",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Easy way to handle form validation",
   "main": "./lib/index.js",
   "unpkg": "./lib/index.js",
