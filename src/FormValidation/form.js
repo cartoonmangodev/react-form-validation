@@ -174,6 +174,7 @@ const formValidationHandler = ({
         FormRef.prototype._multipleConfig = newObject(_formConfig);
         return;
       }
+
       Object.entries(__formConfig).forEach(([key, val]) => {
         if (_keys && !_keys.includes(key)) return;
         if (!__formRef.current._formRef.__formRef__)
@@ -416,6 +417,13 @@ const formValidationHandler = ({
       let error = null;
       let maxError = null;
       if (
+        config.allowOnlyNumber ||
+        config.min ||
+        config.max ||
+        config.type === "number"
+      )
+        if (Number.isNaN(+value) && value !== "") return { error, value, key };
+      if (
         !config._noValidate &&
         config._initiated &&
         (typeof config.isValidateOnChange === "boolean"
@@ -433,7 +441,7 @@ const formValidationHandler = ({
             typeof (config.message && config.message.maxLength) !== "undefined"
               ? config.message.maxLength
               : `maximum ${config.maxLength} characters are allowed`;
-          value = value.slice(0, config.maxLength);
+          // value = value.slice(0, config.maxLength);
         }
 
         if (config) {
@@ -474,8 +482,20 @@ const formValidationHandler = ({
               (config.message && config.message.allowValidNumber) !== undefined
                 ? config.message && config.message.allowValidNumber
                 : "Please enter valid number";
-          else if (config.allowOnlyNumber)
-            if (!Number.isNaN(+value)) {
+          else if (config.allowOnlyNumber || config.min || config.max)
+            if (!Number.isNaN(+value) && value !== "") {
+              if (value && (config.min || config.max))
+                if (+value < config.min) {
+                  error =
+                    (config.message && config.message.min) !== undefined
+                      ? config.message && config.message.min
+                      : `Minimum value ${config.min} is required`;
+                } else if (+value > config.max) {
+                  error =
+                    (config.message && config.message.max) !== undefined
+                      ? config.message && config.message.max
+                      : `Maximum value ${config.max} is allowed`;
+                }
               setValues(
                 {
                   ...values,
@@ -483,12 +503,22 @@ const formValidationHandler = ({
                 },
                 dontRender
               );
-            } else
-              error =
-                typeof (config.message && config.message.allowOnlyNumber) !==
-                "undefined"
-                  ? config.message && config.message.allowOnlyNumber
-                  : "Only numbers are allowed";
+            } else {
+              if (value && value.length)
+                error =
+                  typeof (config.message && config.message.allowOnlyNumber) !==
+                  "undefined"
+                    ? config.message && config.message.allowOnlyNumber
+                    : "Only numbers are allowed";
+              else
+                setValues(
+                  {
+                    ...values,
+                    [key]: value,
+                  },
+                  dontRender
+                );
+            }
           else {
             setValues(
               {
@@ -602,7 +632,6 @@ const formValidationHandler = ({
       const isError = [];
       for (const [key, val] of Object.entries(formConfig)) {
         if (val[IS_SCHEMA] || val[IS_MULTIPLE] || val._formId_) continue;
-        console.log(key, _values, formRef.current.getValues());
         const { error: _error } = validateValue(
           _values[key],
           key,
