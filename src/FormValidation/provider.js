@@ -11,6 +11,7 @@ import React, {
 import FormContext, { FormRefContext } from "./context";
 import { IS_FORMREF } from "./constants";
 import { newSchema } from "./utils";
+import { newObject } from "../util";
 
 const getFormRef = (_formRef, id) => {
   let formRef = _formRef;
@@ -39,13 +40,15 @@ export default forwardRef(
   ) => {
     const _ref = useRef({});
     const [_, setRefresh] = useState();
-
     const {
       formRef: __formRef,
       renderForm: _renderForm,
       setRefresh: _setRefresh,
       rootFormRef: _rootFormRef,
     } = useContext(FormRefContext) || {};
+    const { extraProps: _extraProps = {} } = useContext(FormContext) || {};
+
+    const __extraProps = newObject(_extraProps, extraProps);
 
     const rootFormRef = _rootFormRef || _formRef;
 
@@ -80,11 +83,11 @@ export default forwardRef(
       formRef._ref(IS_FORMREF)._setRenderForm = ___formRef._setRenderForm;
 
     const [inputProps, setInputProps] = useState(
-      () => formRef && formRef.getInputProps(extraProps)
+      () => formRef && formRef.getInputProps(__extraProps)
     );
 
     useEffect(() => {
-      setInputProps(formRef && formRef.getInputProps(extraProps));
+      setInputProps(formRef && formRef.getInputProps(__extraProps));
     }, [formRef._formId_]);
 
     if (formRef && formRef._formId_) {
@@ -117,7 +120,7 @@ export default forwardRef(
     }, [___formRef._formId_]);
 
     if (formRef && formRef._formId_)
-      formRef._ref(IS_FORMREF)._extraProps = extraProps;
+      formRef._ref(IS_FORMREF)._extraProps = __extraProps;
 
     useEffect(() => {
       formRef._ref(IS_FORMREF)._is_form_initiated = true;
@@ -139,8 +142,10 @@ export default forwardRef(
           inputProps,
           idKey,
           onSubmit,
-          setInputProps: () => setInputProps(formRef.getInputProps(extraProps)),
+          setInputProps: () =>
+            setInputProps(() => formRef.getInputProps(__extraProps)),
           formId: ___formRef._formId_,
+          extraProps: __extraProps,
         }}
       >
         <FormRefContext.Provider

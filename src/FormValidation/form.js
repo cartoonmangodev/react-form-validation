@@ -756,7 +756,6 @@ const formValidationHandler = ({
     const commonInputProps = (
       key,
       {
-        index,
         config,
         propKeyMap: {
           onChange = ON_CHANGE_KEY,
@@ -773,19 +772,21 @@ const formValidationHandler = ({
           INITIAL_FORM_CONFIG._commonInputProps._defaultConfig) ||
           INITIAL_FORM_CONFIG
       );
-      if (INITIAL_FORM_CONFIG)
+      if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._config = {
-          index,
           config,
           key,
           ...rest,
         };
+        if (INITIAL_FORM_CONFIG._config.config === undefined)
+          delete INITIAL_FORM_CONFIG._config.config;
+      }
+
       let _commonInputProps = {
         [onChange]: (e) => {
           onChangeValues(e, key, config);
           const _validateFieldsOnChange =
-            (config && config.validateFieldsOnChange) ||
-            (INITIAL_FORM_CONFIG && INITIAL_FORM_CONFIG.validateFieldsOnChange);
+            INITIAL_FORM_CONFIG && INITIAL_FORM_CONFIG.validateFieldsOnChange;
           if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
             validateFields(
               _validateFieldsOnChange,
@@ -1369,11 +1370,12 @@ const formValidationHandler = ({
     FormRef.prototype._formValidationHandler = _formValidationHandler;
     FormRef.prototype.formConfig = newObject(formRef.current._formConfig);
     FormRef.prototype._renderInputProps = () => {
-      formRef.current._setInputProps(
-        formRef.current.getInputProps(
-          formRef.current._extraProps || __formRef.current._extraProps
-        )
-      );
+      if (typeOf(formRef.current._setInputProps) === TYPE_FUNCTION)
+        formRef.current._setInputProps(
+          formRef.current.getInputProps(
+            formRef.current._extraProps || __formRef.current._extraProps
+          )
+        );
     };
 
     // formRef.current._formRef = __formRef.current._formRef;

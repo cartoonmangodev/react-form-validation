@@ -74,7 +74,7 @@ export default forwardRef(
       noAutoLoop,
       id,
       renderForm: ___renderForm,
-      initialCount = 1,
+      defaultCount = 1,
     },
     ref
   ) => {
@@ -138,7 +138,7 @@ export default forwardRef(
         );
       }
       return [
-        ...Array(typeof initialCount === "number" ? initialCount : 0),
+        ...Array(typeof defaultCount === "number" ? defaultCount : 0),
       ].map((_values) =>
         generateNewFormRef(
           formRef,

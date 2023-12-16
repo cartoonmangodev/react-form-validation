@@ -1,27 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/no-anonymous-default-export */
 /* eslint-disable react/display-name */
-import React, { useContext, memo, useEffect, useRef } from "react";
-import FormContext, { FormControllerContext, FormRefContext } from "./context";
-import { newObject, typeOf } from "../utils";
-import { TYPE_OBJECT } from "../constants";
-import { IS_SCHEMA, IS_LITERAL_VALUE } from "./constants";
+import { useContext, useEffect, useRef } from "react";
+import FormContext, { FormControllerContext, FormRefContext } from "../context";
+import { newObject, typeOf } from "../../utils";
+import { TYPE_OBJECT } from "../../constants";
+import { IS_SCHEMA, IS_LITERAL_VALUE } from "../constants";
 
 const ID_KEY = "id";
 
-const Consumer = memo(
-  ({ children, ...props }) => {
-    return typeof children === "function" ? children(props) : children;
-  },
-  (prev, next) =>
-    prev.inputProps.value === next.inputProps.value &&
-    prev.inputProps.error === next.inputProps.error &&
-    prev.inputProps.lastUpdated === next.inputProps.lastUpdated
-);
-
-export default ({ children, ...props }) => {
+export default (props = {}) => {
   const ref = useRef({});
-  const { inputProps = {}, idKey, onSubmit, setInputProps } =
+  const { inputProps = {}, idKey, onSubmit, setInputProps, extraProps } =
     useContext(FormContext) || {};
 
   const { render, inputConfig: _inputConfig, ...commonInputProps } =
@@ -64,7 +53,7 @@ export default ({ children, ...props }) => {
     formRef._renderForm(true);
   }
 
-  const __inputProps = formRef.getInputProps();
+  const __inputProps = formRef.getInputProps(extraProps);
   if (!(props[idKey || ID_KEY] in __inputProps) && !ref.current.id) {
     ref.current.id = props[idKey || ID_KEY];
     if (IS_LITERAL_VALUE in __inputProps) {
@@ -115,13 +104,12 @@ export default ({ children, ...props }) => {
       _inputFieldProps.value === undefined ? "" : _inputFieldProps.value
     );
 
-  const _inputProps = formRef.getInputProps()[props[idKey || ID_KEY]] || {};
+  const _inputProps =
+    formRef.getInputProps(extraProps)[props[idKey || ID_KEY]] || {};
 
-  const _props = {
+  return {
     inputProps: { ...(_inputProps.inputProps || {}), ...commonInputProps },
     _inputFieldConfig: _inputProps._config,
     ...(onSubmit ? { onSubmit } : {}),
-    ...props,
   };
-  return <Consumer {..._props}>{children}</Consumer>;
 };
