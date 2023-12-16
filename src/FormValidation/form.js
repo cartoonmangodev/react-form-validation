@@ -1428,7 +1428,11 @@ const formValidationHandler = ({
     const { formRef: _formRef, rootFormRef } = useContext(FormRefContext) || {};
     const formRef = formId ? _formRefs[formId] : _formRef;
     if (!formRef) return {};
-    return { formRef, formId: formRef && formRef._formId_ };
+    return {
+      formRef,
+      formId: formRef && formRef._formId_,
+      rootFormRef: rootFormRef || formRef,
+    };
   };
 
   return {

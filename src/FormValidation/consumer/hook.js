@@ -1,6 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 /* eslint-disable react/display-name */
 import { useContext, useEffect, useRef } from "react";
+import isEqual from "fast-deep-equal";
 import FormContext, { FormControllerContext, FormRefContext } from "../context";
 import { newObject, typeOf } from "../../utils";
 import { TYPE_OBJECT } from "../../constants";
@@ -22,7 +23,10 @@ export default (props = {}) => {
 
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
 
-  if (_inputFieldProps._fieldConfig) {
+  if (
+    _inputFieldProps._fieldConfig &&
+    !isEqual(ref.current.inputConfig, inputConfig)
+  ) {
     if (ref.current.inputConfig)
       Object.keys(ref.current.inputConfig).forEach(([key, val]) => {
         delete _inputFieldProps._fieldConfig[key];
