@@ -160,7 +160,8 @@ export default forwardRef(
         >
           {ref && "current" in ref && (ref.current = formRef) && null}
           {typeof children === "function"
-            ? children(inputProps, {
+            ? children({
+                inputProps,
                 values: formRef.getValues(),
                 errors: formRef.getErrors(),
                 formRef,
