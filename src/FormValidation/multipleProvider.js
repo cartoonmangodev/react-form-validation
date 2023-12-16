@@ -66,6 +66,11 @@ const _getFormRef = (_formRef, id) => {
   return formRef;
 };
 
+const checkFormRefIsValid = (formRef) => {
+  if (!formRef || formRef.constructor.name !== "FormRef") {
+    throw new Error("Invalid FormRef");
+  }
+};
 export default forwardRef(
   (
     {
@@ -78,6 +83,14 @@ export default forwardRef(
     },
     ref
   ) => {
+    if (
+      (!_formRef && !id) ||
+      (_formRef && _formRef.constructor.name !== "FormRef")
+    ) {
+      if (_formRef) throw new Error("Invalid FormRef");
+      else throw new Error("Required props 'formRef' or 'id' ");
+    }
+
     const {
       formRef: ___formRef,
       setRefresh: _setRefresh,
@@ -93,6 +106,7 @@ export default forwardRef(
 
     const rootFormRef = _rootFormRef || _formRef;
     let _thisFormRef = _formRef || ___formRef;
+    checkFormRefIsValid(_thisFormRef);
     const __formRef = _getFormRef(_thisFormRef, id);
     let formRef = __formRef;
 
@@ -115,6 +129,8 @@ export default forwardRef(
           },
         });
     }
+
+    checkFormRefIsValid(formRef);
 
     const valueRef = useRef({});
     const [_, setRefresh] = useState();

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import {
   TYPE_BOOLEAN,
@@ -41,6 +41,7 @@ import {
   newObject,
   typeOf,
 } from "../utils";
+import { FormRefContext } from "./context";
 
 const formValidationHandler = ({
   ON_CHANGE_KEY: _ON_CHANGE_KEY,
@@ -122,7 +123,6 @@ const formValidationHandler = ({
       FormRef.prototype._isSchema_or_isMultiple_config_is_root = _isSchema_or_isMultiple_config_is_root;
     }
 
-    if (_isMultipleForm) console.log(initialValues);
     FormRef.prototype[IS_MULTIPLE] = {
       _initialValues:
         _isMultipleForm && Array.isArray(initialValues)
@@ -203,7 +203,6 @@ const formValidationHandler = ({
                 val[SCHEMA_CONFIG],
             ref,
             initialState: _values[key] || initialValues[key],
-            _formRef: __formRef,
             _formRef: __formRef,
             _objKey: ___objKey,
             _parentRef: formRef.current,
@@ -1408,7 +1407,7 @@ const formValidationHandler = ({
   };
 
   const useFormValidationHook = ({ renderForm, ...props }) => {
-    const [_renderForm, setRenderForm] = useState();
+    const setRenderForm = useState()[1];
     const [{ formRef, formId }] = useState(() =>
       _formValidationHandler({
         ...props,
@@ -1420,17 +1419,15 @@ const formValidationHandler = ({
     formRef._ref(IS_FORMREF)._setRenderForm = setRenderForm;
     formRef._ref(IS_FORMREF)._isRenderForm = renderForm;
 
-    useEffect(() => {
-      return () => {
-        formRef._onUnMountForm();
-      };
-    }, [formRef]);
+    useEffect(() => formRef._onUnMountForm, [formRef]);
 
     return { formRef, formId };
   };
 
   const useFormRef = (formId) => {
-    const [formRef] = useState(() => _formRefs[formId]);
+    const { formRef: _formRef, rootFormRef } = useContext(FormRefContext) || {};
+    const formRef = formId ? _formRefs[formId] : _formRef;
+    if (!formRef) return {};
     return { formRef, formId: formRef && formRef._formId_ };
   };
 

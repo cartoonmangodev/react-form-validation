@@ -25,6 +25,12 @@ const getFormRef = (_formRef, id) => {
   return formRef;
 };
 
+const checkFormRefIsValid = (formRef) => {
+  if (!formRef || formRef.constructor.name !== "FormRef") {
+    throw new Error("Invalid FormRef");
+  }
+};
+
 export default forwardRef(
   (
     {
@@ -38,14 +44,23 @@ export default forwardRef(
     },
     ref
   ) => {
-    const _ref = useRef({});
-    const [_, setRefresh] = useState();
+    if (
+      (!_formRef && !id) ||
+      (_formRef && _formRef.constructor.name !== "FormRef")
+    ) {
+      if (_formRef) throw new Error("Invalid FormRef");
+      else throw new Error("Required props 'formRef' or 'id' ");
+    }
+
     const {
       formRef: __formRef,
       renderForm: _renderForm,
       setRefresh: _setRefresh,
       rootFormRef: _rootFormRef,
     } = useContext(FormRefContext) || {};
+    const _ref = useRef({});
+    const [_, setRefresh] = useState();
+
     const { extraProps: _extraProps = {} } = useContext(FormContext) || {};
 
     const __extraProps = newObject(_extraProps, extraProps);
@@ -66,10 +81,13 @@ export default forwardRef(
 
     let ___formRef = _formRef || __formRef;
 
+    checkFormRefIsValid(___formRef);
+
     let formRef = getFormRef(___formRef, id);
 
     if (!formRef) {
       if (id) {
+        checkFormRefIsValid(___formRef);
         idRef.current.id = id;
         let newFormRef = ___formRef.modifyFormConfig({
           [id]: newSchema({}),
@@ -79,6 +97,8 @@ export default forwardRef(
         formRef = _valueRef;
       }
     }
+    checkFormRefIsValid(formRef);
+
     if (!formRef._setRenderForm)
       formRef._ref(IS_FORMREF)._setRenderForm = ___formRef._setRenderForm;
 
