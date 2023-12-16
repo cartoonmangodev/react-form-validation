@@ -86,7 +86,6 @@ function validate(
             ? message.regex
             : `${key} is invalid `;
         }
-        console.error(`${key} is invalid `);
       }
 
       return "";
