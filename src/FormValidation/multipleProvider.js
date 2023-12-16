@@ -168,6 +168,9 @@ export default forwardRef(
     const [formRefArray, setFormRefArray] = useState(() => generate());
     valueRef.current.formRefArray = formRefArray;
 
+    const getFormIds = () =>
+      valueRef.current.formRefArray.map(({ formId }) => formId);
+
     const onChangeOrderForm = useCallback((currentIndex, targetIndex) => {
       if (
         currentIndex !== targetIndex &&
@@ -411,6 +414,7 @@ export default forwardRef(
       prepend: (_index, value) => {
         onAddForm(value, _index === 0 ? 0 : _index);
       },
+      formIds: getFormIds(),
     };
 
     formRef.formArrayProps = multiple;
@@ -465,6 +469,7 @@ export default forwardRef(
         clone: onCloneForm.bind(null, _index),
         swap: onSwapForm.bind(null, _index),
         move: onChangeOrderForm.bind(null, _index, 0),
+        formIds: getFormIds(),
         insert: (targetIndex, value, count) =>
           onAddForm(value, targetIndex, count),
         prepend: (value) => {
