@@ -1,5 +1,5 @@
 {
-  "name": "@cartoonmangodev/react-form",
+  "name": "@cartoonmangodev/react-form-handler",
   "version": "0.0.3",
   "description": "Easy way to handle form validation",
   "main": "./lib/index.js",
