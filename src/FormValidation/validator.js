@@ -15,7 +15,7 @@ function validate(
     isRequired,
     message = {},
     length,
-    regex,
+    pattern,
     key,
   } = {}
 ) {
@@ -79,10 +79,10 @@ function validate(
           ? message.required
           : "This field is required";
       }
-      if (regex) {
-        if (Object.prototype.toString.call(regex) === "[object RegExp]") {
-          if (regex.test(value)) return "";
-          return message && typeof message.regex !== "undefined"
+      if (pattern) {
+        if (Object.prototype.toString.call(pattern) === "[object RegExp]") {
+          if (pattern.test(value)) return "";
+          return message && typeof message.pattern !== "undefined"
             ? message.regex
             : `${key} is invalid `;
         }
