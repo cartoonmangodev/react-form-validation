@@ -809,7 +809,10 @@ const formValidationHandler = ({
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._config = {
           config,
+          formId,
           key,
+          keyName: key,
+          lastUpdated: formRef.current.lastUpdated,
           ...rest,
         };
         if (INITIAL_FORM_CONFIG._config.config === undefined)
@@ -832,11 +835,8 @@ const formValidationHandler = ({
         [onBlur]: (e) => onBlurValues(e, key, INITIAL_FORM_CONFIG),
         [value]: values[key],
         [error]: errors[key],
-        keyName: key,
-        lastUpdated: formRef.current.lastUpdated,
       };
       _commonInputProps = {
-        formId,
         ..._commonInputProps,
         ...((INITIAL_FORM_CONFIG &&
           (typeof INITIAL_FORM_CONFIG.inputProps === "function"
