@@ -168,18 +168,43 @@ export default forwardRef(
     const [formRefArray, setFormRefArray] = useState(() => generate());
     valueRef.current.formRefArray = formRefArray;
 
-    const onChangeOrderForm = useCallback((currentIndex, index) => {
+    const onChangeOrderForm = useCallback((currentIndex, targetIndex) => {
       setFormRefArray((_val) => {
-        const ___val = { ..._val };
-        const __val = ___val.slice();
-        const __value = __val[currentIndex];
+        const ___val = _val.slice();
+        const __value = ___val[currentIndex];
         if (typeof index === "number" && typeof currentIndex === "number") {
-          __val.splice(currentIndex, 1);
-          __val.splice(index, 0, __value);
-          ___val[currentIndex] = __val;
+          ___val.splice(currentIndex, 1);
+          ___val.splice(targetIndex, 0, __value);
         }
         return ___val;
       });
+    }, []);
+
+    const onSwapForm = useCallback((currentIndex, targetIndex) => {
+      if (
+        currentIndex !== targetIndex &&
+        valueRef.current.formRefArray.length > 1 &&
+        targetIndex >= 0 &&
+        targetIndex < valueRef.current.formRefArray.length &&
+        currentIndex >= 0 &&
+        currentIndex < valueRef.current.formRefArray.length
+      )
+        setFormRefArray((_val) => {
+          const ___val = _val.slice();
+          const __value = ___val[currentIndex];
+          const __value2 = ___val[targetIndex];
+          console.log(___val);
+          if (
+            typeof targetIndex === "number" &&
+            typeof currentIndex === "number"
+          ) {
+            ___val.splice(currentIndex, 1, __value2);
+            console.log(___val);
+            ___val.splice(targetIndex, 1, __value);
+            console.log(___val);
+          }
+          return ___val;
+        });
     }, []);
 
     const onResetForm = (_formId) => {
@@ -215,6 +240,11 @@ export default forwardRef(
         startIndex,
         formCount
       );
+    };
+
+    const onCloneForm = (startIndex, formCount = 1) => {
+      const value = getValues()[startIndex];
+      onAddMultipleForm(Array(formCount).fill(value), startIndex, formCount);
     };
 
     const onDeleteMultipleForm = (deleteKey = []) => {
@@ -355,6 +385,7 @@ export default forwardRef(
     formRef.resetForm = resetForm;
     formRef.clearForm = clearForm;
     formRef.count = formRefArray.length;
+    formRef.setFormRefArray = setFormRefArray;
     formRef.values = getValues();
     formRef.errors = getErrors();
 
@@ -401,10 +432,15 @@ export default forwardRef(
     const _formRefProps = (_index) => {
       const _props = {
         count: formRefArray.length,
-        append: (value) => onAddForm(value, _index + 1),
+        append: (value, count) => onAddForm(value, _index + 1, count),
         reset: onResetForm.bind(null, formRefArray[_index].formId),
         clear: onClearForm.bind(null, formRefArray[_index].formId),
         delete: onDeleteForm.bind(null, formRefArray[_index].formId),
+        clone: onCloneForm.bind(null, _index),
+        swap: onSwapForm.bind(null, _index),
+        move: onChangeOrderForm.bind(null, _index),
+        insert: (targetIndex, value, count) =>
+          onAddForm.bind(null, value, 2, count),
         prepend: (value) => {
           onAddForm(value, _index === 0 ? 0 : _index);
         },
