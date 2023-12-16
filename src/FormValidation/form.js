@@ -416,7 +416,13 @@ const formValidationHandler = ({
           : { value: __value };
       let error = null;
       let maxError = null;
-      if (!config._noValidate && config._initiated) {
+      if (
+        !config._noValidate &&
+        config._initiated &&
+        (typeof config.isValidateOnChange === "boolean"
+          ? config.isValidateOnChange
+          : true)
+      ) {
         if (
           typeof config.trim !== "undefined"
             ? config.trim
