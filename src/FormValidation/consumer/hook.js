@@ -84,10 +84,6 @@ export default (props = {}) => {
   useEffect(() => {
     setInputProps();
     return () => {
-      console.log(
-        rootRef.current.dontResetOnUnmount,
-        "rootRef.current.dontResetOnUnmount"
-      );
       if (!rootRef.current.dontResetOnUnmount) {
         if (_inputFieldProps._fieldConfig) {
           _inputFieldProps._fieldConfig._initiated = false;
