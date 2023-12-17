@@ -1,4 +1,4 @@
 /* eslint-disable import/no-anonymous-default-export */
-import useConsumerHook from "./hook";
+import useConsumerHook from "./consumerHook";
 
-export const useConsumer = useConsumerHook;
+export const useFormConsumer = useConsumerHook;

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/no-anonymous-default-export */
 import React, { memo } from "react";
-import useConsumerHook from "./hook";
+import useConsumerHook from "./consumerHook";
 
 const Consumer = memo(
   ({ children, ...props }) => {
@@ -18,4 +18,4 @@ export default ({ children, ...props }) => (
   <Consumer {...useConsumerHook(props)}>{children}</Consumer>
 );
 
-export { useConsumer } from "./useConsumer";
+export { useFormConsumer } from "./useConsumer";

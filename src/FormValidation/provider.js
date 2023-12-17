@@ -9,7 +9,7 @@ import React, {
   useContext,
 } from "react";
 import FormContext, { FormRefContext } from "./context";
-import { IS_FORMREF } from "./constants";
+import { IS_FORMREF, PRIMITIVE_VALUE } from "./constants";
 import { newSchema } from "./utils";
 import { newObject } from "../util";
 
@@ -41,6 +41,7 @@ export default forwardRef(
       extraProps,
       id,
       renderForm: ___renderForm,
+      dontResetOnUnmount,
     },
     ref
   ) => {
@@ -51,14 +52,20 @@ export default forwardRef(
       if (_formRef) throw new Error("Invalid FormRef");
       else throw new Error("Required props 'formRef' or 'id' ");
     }
-
     const {
       formRef: __formRef,
       renderForm: _renderForm,
       setRefresh: _setRefresh,
       rootFormRef: _rootFormRef,
+      _rootRef: __rootRef,
     } = useContext(FormRefContext) || {};
     const _ref = useRef({});
+    const _rootRef = useRef({});
+
+    const rootRef = __rootRef || _rootRef;
+
+    _ref.current.dontResetOnUnmount = dontResetOnUnmount;
+
     const [_, setRefresh] = useState();
 
     const { extraProps: _extraProps = {} } = useContext(FormContext) || {};
@@ -85,9 +92,23 @@ export default forwardRef(
 
     let formRef = getFormRef(___formRef, id);
 
+    if (
+      _formRef &&
+      __formRef &&
+      (__formRef.formId === _formRef.formId ||
+        _formRef.formId === rootFormRef.formId)
+    )
+      throw new Error(
+        'Invalid: Formref are not valid. Cannot be used formref inside nested formref. Please use "id" instead'
+      );
+
     if (!formRef) {
       if (id) {
         checkFormRefIsValid(___formRef);
+        if (___formRef._isMultipleForm)
+          throw new Error(
+            `Invalid: Cannot use 'id' directly under 'FormRef.Multiple'. Please use formRef props instead `
+          );
         idRef.current.id = id;
         let newFormRef = ___formRef.modifyFormConfig({
           [id]: newSchema({}),
@@ -98,6 +119,13 @@ export default forwardRef(
       }
     }
     checkFormRefIsValid(formRef);
+
+    if (formRef._isMultipleForm)
+      throw new Error(
+        id
+          ? `Invalid: This id (${id}) is configured for multiple form. Please use the 'Form.Multiple'`
+          : "Invalid: This FormRef is configured for multiple form. Please use the 'Form.Multiple'"
+      );
 
     if (!formRef._setRenderForm)
       formRef._ref(IS_FORMREF)._setRenderForm = ___formRef._setRenderForm;
@@ -121,18 +149,29 @@ export default forwardRef(
       }
     }
 
+    useEffect(
+      () => () => {
+        if (_ref.current.dontResetOnUnmount) {
+          rootRef.current.dontResetOnUnmount = _ref.current.dontResetOnUnmount;
+        }
+      },
+      []
+    );
+
     useEffect(() => {
       return () => {
-        if (formRef && formRef._ref(IS_FORMREF)._setInputProps)
-          delete formRef._ref(IS_FORMREF)._setInputProps;
-        if (formRef && formRef._ref(IS_FORMREF)._extraProps)
-          delete formRef._ref(IS_FORMREF)._extraProps;
+        if (!rootRef.current.dontResetOnUnmount) {
+          if (formRef && formRef._ref(IS_FORMREF)._setInputProps)
+            delete formRef._ref(IS_FORMREF)._setInputProps;
+          if (formRef && formRef._ref(IS_FORMREF)._extraProps)
+            delete formRef._ref(IS_FORMREF)._extraProps;
+        }
       };
     }, [formRef._formId_]);
 
     useEffect(() => {
       return () => {
-        if (idRef.current.id) {
+        if (idRef.current.id && !rootRef.current.dontResetOnUnmount) {
           ___formRef.deleteFormConfig([idRef.current.id]);
           _ref.current.__setRefresh({});
         }
@@ -147,9 +186,11 @@ export default forwardRef(
       formRef._renderForm();
       formRef.renderForm();
       return () => {
-        formRef._ref(IS_FORMREF)._is_form_initiated = false;
-        formRef._renderForm();
-        formRef.renderForm();
+        if (!rootRef.current.dontResetOnUnmount) {
+          formRef._ref(IS_FORMREF)._is_form_initiated = false;
+          formRef._renderForm();
+          formRef.renderForm();
+        }
       };
     }, [formRef._formId_]);
 
@@ -176,6 +217,7 @@ export default forwardRef(
             lastUpdated: formRef._lastUpdated,
             setRefresh: __setRefresh,
             rootFormRef: _rootFormRef || _formRef,
+            _rootRef: rootRef,
           }}
         >
           {ref && "current" in ref && (ref.current = formRef) && null}

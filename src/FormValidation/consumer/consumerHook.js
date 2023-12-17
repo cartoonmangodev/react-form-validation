@@ -19,7 +19,8 @@ export default (props = {}) => {
 
   const inputConfig = { ...props.inputConfig, ..._inputConfig };
 
-  const { formRef, renderForm } = useContext(FormRefContext) || {};
+  const { formRef, renderForm, _rootRef: rootRef } =
+    useContext(FormRefContext) || {};
 
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
 
@@ -56,15 +57,35 @@ export default (props = {}) => {
     );
     formRef._renderForm(true);
   }
+  if (
+    PRIMITIVE_VALUE === props[idKey || ID_KEY] &&
+    !(formRef._parentRef && formRef._parentRef._isMultipleForm)
+  )
+    throw new Error(
+      `Invalid: "PRIMITIVE_VALUE" can only be used directly under "Form.Multiple"`
+    );
 
   const __inputProps = formRef.getInputProps(extraProps);
+  if (
+    PRIMITIVE_VALUE in __inputProps &&
+    props[idKey || ID_KEY] !== PRIMITIVE_VALUE
+  ) {
+    throw new Error(
+      `Invalid: "${
+        props[idKey || ID_KEY]
+      }" cannot add any field to primitive value `
+    );
+  }
   if (!(props[idKey || ID_KEY] in __inputProps) && !ref.current.id) {
     ref.current.id = props[idKey || ID_KEY];
-    if (PRIMITIVE_VALUE in __inputProps) {
+    if (
+      props[idKey || ID_KEY] === PRIMITIVE_VALUE &&
+      Object.values(__inputProps).filter(
+        (_config) => _config._config && _config._config._initiated
+      ).length
+    ) {
       throw new Error(
-        `Invalid: "${
-          props[idKey || ID_KEY]
-        }" cannot add any field to literal value `
+        `Invalid: cannot add id="PRIMITIVE_VALUE" field. Primitive value is always unique. Please remove the other fields in order to use id="PRIMITIVE_VALUE" `
       );
     }
     formRef.modifyFormConfig({
@@ -83,21 +104,23 @@ export default (props = {}) => {
   useEffect(() => {
     setInputProps();
     return () => {
-      if (_inputFieldProps._fieldConfig) {
-        _inputFieldProps._fieldConfig._initiated = false;
-        if (typeOf(inputConfig) === TYPE_OBJECT)
-          Object.keys(inputConfig).forEach((key) => {
-            _inputFieldProps._fieldConfig[key] =
-              _inputFieldProps._defaultConfig[key];
-          });
+      if (!rootRef.current.dontResetOnUnmount) {
+        if (_inputFieldProps._fieldConfig) {
+          _inputFieldProps._fieldConfig._initiated = false;
+          if (typeOf(inputConfig) === TYPE_OBJECT)
+            Object.keys(inputConfig).forEach((key) => {
+              _inputFieldProps._fieldConfig[key] =
+                _inputFieldProps._defaultConfig[key];
+            });
+        }
+        if (ref.current.id)
+          inputProps[IS_SCHEMA].deleteFormConfig([ref.current.id]);
+        inputProps[IS_SCHEMA].resetFormInput(
+          [props[idKey || ID_KEY]],
+          !!ref.current.id
+        );
+        inputProps[IS_SCHEMA].onFormChangeCallback();
       }
-      if (ref.current.id)
-        inputProps[IS_SCHEMA].deleteFormConfig([ref.current.id]);
-      inputProps[IS_SCHEMA].resetFormInput(
-        [props[idKey || ID_KEY]],
-        !!ref.current.id
-      );
-      inputProps[IS_SCHEMA].onFormChangeCallback();
     };
   }, [formRef._formId_]);
 
