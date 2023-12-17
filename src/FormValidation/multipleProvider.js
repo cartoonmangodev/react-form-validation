@@ -16,12 +16,12 @@ import {
   SCHEMA_CONFIG,
   IS_FORMREF,
   IS_MULTIPLE,
-  IS_LITERAL_VALUE,
+  PRIMITIVE_VALUE,
 } from "./constants";
 
 const convertToOriginalData = (value) =>
-  typeOf(value) === TYPE_OBJECT && IS_LITERAL_VALUE in value
-    ? value[IS_LITERAL_VALUE]
+  typeOf(value) === TYPE_OBJECT && PRIMITIVE_VALUE in value
+    ? value[PRIMITIVE_VALUE]
     : value;
 
 const generateNewFormRef = (
@@ -35,7 +35,7 @@ const generateNewFormRef = (
     typeOf(_values) === TYPE_OBJECT || _values === undefined
       ? _values
       : {
-          [IS_LITERAL_VALUE]: _values,
+          [PRIMITIVE_VALUE]: _values,
         };
   const _formRef = formRef._formValidationHandler(
     newObject({
@@ -168,10 +168,21 @@ export default forwardRef(
     const [formRefArray, setFormRefArray] = useState(() => generate());
     valueRef.current.formRefArray = formRefArray;
 
-    const getFormIds = () =>
-      valueRef.current.formRefArray.map(({ formId }) => formId);
+    const formIdIndex = {};
 
-    const onChangeOrderForm = useCallback((currentIndex, targetIndex) => {
+    const getFormIds = () =>
+      valueRef.current.formRefArray.map(({ formId }, _index) => {
+        formIdIndex[formId] = _index;
+        return formId;
+      });
+
+    const formIds = getFormIds();
+    valueRef.current.formIds = formIds;
+    valueRef.current.formIdIndex = formIdIndex;
+
+    const onChangeOrderForm = useCallback((sourceFormId, targetFormId) => {
+      const currentIndex = valueRef.current.formIdIndex[sourceFormId];
+      const targetIndex = valueRef.current.formIdIndex[targetFormId];
       if (
         currentIndex !== targetIndex &&
         valueRef.current.formRefArray.length > 1 &&
@@ -180,7 +191,6 @@ export default forwardRef(
         currentIndex >= 0 &&
         currentIndex < valueRef.current.formRefArray.length
       ) {
-        console.log(currentIndex, targetIndex);
         setFormRefArray((_val) => {
           const ___val = _val.slice();
           const __value = ___val[currentIndex];
@@ -196,7 +206,9 @@ export default forwardRef(
       }
     }, []);
 
-    const onSwapForm = useCallback((currentIndex, targetIndex) => {
+    const onSwapForm = useCallback((sourceFormId, targetFormId) => {
+      const currentIndex = valueRef.current.formIdIndex[sourceFormId];
+      const targetIndex = valueRef.current.formIdIndex[targetFormId];
       if (
         currentIndex !== targetIndex &&
         valueRef.current.formRefArray.length > 1 &&
@@ -223,40 +235,62 @@ export default forwardRef(
         });
     }, []);
 
-    const onResetForm = (_formId) => {
-      const form = formRefArray.find(({ formId }) => formId === _formId);
-      if (form) form.formRef.resetForm();
-    };
-
-    const onClearForm = (_formId) => {
-      const form = formRefArray.find(({ formId }) => formId === _formId);
-      if (form) form.formRef.clearForm();
-    };
-
-    const onAddMultipleForm = (value = [], startIndex, formCount = 1) => {
-      setFormRefArray((_val) => {
-        let __val = _val.slice();
-        const _newFormRef = [...Array(formCount)].map((_, _index) =>
-          generateNewFormRef(formRef, value[_index], ___formRef, rootFormRef)
-        );
-        if (typeof startIndex === "number")
-          __val.splice(startIndex, 0, ..._newFormRef);
-        else __val.concat(_newFormRef);
-        return __val;
+    const onResetForm = (formIds = []) => {
+      const _formIds = Array.isArray(formIds) ? formIds : [formIds];
+      _formIds.forEach((_formId) => {
+        const form =
+          valueRef.current.formRefArray[valueRef.current.formIdIndex[_formId]];
+        if (form && form.formRef) form.formRef.resetForm();
       });
     };
 
-    const onAddForm = (value = [], startIndex, formCount) => {
+    const onClearForm = (formIds = []) => {
+      const _formIds = Array.isArray(formIds) ? formIds : [formIds];
+      _formIds.forEach((_formId) => {
+        const form =
+          valueRef.current.formRefArray[valueRef.current.formIdIndex[_formId]];
+        if (form && form.formRef) form.formRef.clearForm();
+      });
+    };
+
+    const onAddMultipleForm = (value = [], formId, formCount = 1, isAppend) => {
+      const startIndex =
+        valueRef.current.formIdIndex[formId] + (isAppend ? 1 : 0);
+      if (startIndex >= 0 && startIndex <= valueRef.current.formRefArray.length)
+        setFormRefArray((_val) => {
+          let __val = _val.slice();
+          const _newFormRef = [...Array(formCount)].map((_, _index) =>
+            generateNewFormRef(formRef, value[_index], ___formRef, rootFormRef)
+          );
+          if (typeof startIndex === "number")
+            __val.splice(startIndex, 0, ..._newFormRef);
+          else __val.concat(_newFormRef);
+          return __val;
+        });
+    };
+
+    const onAddForm = (value = [], formId, formCount, isAppend) => {
       onAddMultipleForm(
         Array.isArray(value) ? value : value !== undefined ? [value] : [],
-        startIndex,
-        formCount
+        formId,
+        formCount,
+        isAppend
       );
     };
 
-    const onCloneForm = (targetIndex, formCount = 1) => {
-      const value = getValues()[targetIndex];
-      onAddMultipleForm(Array(formCount).fill(value), targetIndex, formCount);
+    const onCloneForm = (sourceFormId, count = 1) => {
+      const targetIndex = valueRef.current.formIdIndex[sourceFormId];
+      if (
+        targetIndex > -1 &&
+        targetIndex < valueRef.current.formRefArray.length &&
+        valueRef.current.formRefArray[targetIndex] &&
+        valueRef.current.formRefArray[targetIndex].formRef
+      ) {
+        const value = valueRef.current.formRefArray[
+          targetIndex
+        ].formRef.getValues();
+        onAddMultipleForm(Array(count).fill(value), sourceFormId, count);
+      }
     };
 
     const onDeleteMultipleForm = (deleteKey = []) => {
@@ -402,19 +436,20 @@ export default forwardRef(
     formRef.errors = getErrors();
 
     const multiple = {
-      append: (_index, value, count) => onAddForm(value, _index + 1, count),
+      append: (targetFormId, value = [], count) =>
+        onAddForm(value, targetFormId, count, true),
       reset: onResetForm,
       clear: onClearForm,
       delete: onDeleteForm,
       clone: onCloneForm,
       swap: onSwapForm,
       move: onChangeOrderForm,
-      insert: (targetIndex, value, count) =>
-        onAddForm(value, targetIndex, count),
-      prepend: (_index, value) => {
-        onAddForm(value, _index === 0 ? 0 : _index);
+      insert: (targetFormId, value = [], count) =>
+        onAddForm(value, targetFormId, count),
+      prepend: (targetFormId, value = [], count) => {
+        onAddForm(value, targetFormId, count);
       },
-      formIds: getFormIds(),
+      formIds,
     };
 
     formRef.formArrayProps = multiple;
@@ -459,21 +494,24 @@ export default forwardRef(
       ...formRef,
     };
 
-    const _formRefProps = (_index) => {
+    const _formRefProps = (_index, _ref) => {
       const _props = {
-        count: formRefArray.length,
-        append: (value, count) => onAddForm(value, _index + 1, count),
-        reset: onResetForm.bind(null, formRefArray[_index].formId),
-        clear: onClearForm.bind(null, formRefArray[_index].formId),
-        delete: onDeleteForm.bind(null, formRefArray[_index].formId),
-        clone: onCloneForm.bind(null, _index),
-        swap: onSwapForm.bind(null, _index),
-        move: onChangeOrderForm.bind(null, _index, 0),
-        formIds: getFormIds(),
-        insert: (targetIndex, value, count) =>
-          onAddForm(value, targetIndex, count),
-        prepend: (value) => {
-          onAddForm(value, _index === 0 ? 0 : _index);
+        index: _index,
+        totalArrayCount: formRefArray.length,
+        append: (value = [], count) =>
+          onAddForm(value, formIds[_index], count, true),
+        reset: onResetForm.bind(null, formIds[_index]),
+        clear: onClearForm.bind(null, formIds[_index]),
+        delete: onDeleteForm.bind(null, formIds[_index]),
+        clone: onCloneForm.bind(null, formIds[_index]),
+        swap: onSwapForm.bind(null, formIds[_index]),
+        validate: _ref.validateForm,
+        move: (targetFormId) =>
+          onChangeOrderForm.bind(null, _index, targetFormId),
+        insert: (targetFormId, value = [], count) =>
+          onAddForm(value, targetFormId, count),
+        prepend: (value = [], count) => {
+          onAddForm(value, formIds[_index], count);
         },
       };
       return {
@@ -502,7 +540,11 @@ export default forwardRef(
             : formRefArray.map((_ref, _i) =>
                 typeof children === "function"
                   ? children(
-                      { ..._ref, ..._formRefProps(_i), index: _i },
+                      {
+                        ..._ref,
+                        ..._formRefProps(_i, _ref.formRef),
+                        index: _i,
+                      },
                       _multipleProps,
                       _i
                     )

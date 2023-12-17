@@ -11,7 +11,7 @@ export const TYPE_GENERATOR_FUNCTION = "generatorFunction";
 
 export {
   IS_FORMREF,
-  IS_LITERAL_VALUE,
+  PRIMITIVE_VALUE,
   IS_MULTIPLE,
   IS_SCHEMA,
   SCHEMA_CONFIG,
