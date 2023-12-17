@@ -9,7 +9,7 @@ import React, {
   useContext,
 } from "react";
 import FormContext, { FormRefContext } from "./context";
-import { IS_FORMREF } from "./constants";
+import { IS_FORMREF, PRIMITIVE_VALUE } from "./constants";
 import { newSchema } from "./utils";
 import { newObject } from "../util";
 
@@ -105,6 +105,13 @@ export default forwardRef(
       }
     }
     checkFormRefIsValid(formRef);
+
+    if (formRef._isMultipleForm)
+      throw new Error(
+        id
+          ? `Invalid: This id (${id}) is configured for multiple form. Please use the 'Form.Multiple'`
+          : "Invalid: This FormRef is configured for multiple form. Please use the 'Form.Multiple'"
+      );
 
     if (!formRef._setRenderForm)
       formRef._ref(IS_FORMREF)._setRenderForm = ___formRef._setRenderForm;

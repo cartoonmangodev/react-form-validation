@@ -49,6 +49,8 @@ const generateNewFormRef = (
       getFormData: rootFormRef._isRenderForm
         ? __formRef._setRenderForm
         : undefined,
+      _parentRef: formRef,
+      _parentId: formRef.formId,
     })
   );
   return _formRef;
@@ -139,6 +141,12 @@ export default forwardRef(
     }
 
     checkFormRefIsValid(formRef);
+    if (!formRef._isMultipleForm)
+      throw new Error(
+        id
+          ? `Invalid: This id (${id}) is configured for simple form. Please use the 'Form.Provider'`
+          : `Invalid: This FormRef is configured for simple form. Please use the 'Form.Provider'`
+      );
 
     const valueRef = useRef({});
     const [_, setRefresh] = useState();

@@ -57,15 +57,35 @@ export default (props = {}) => {
     );
     formRef._renderForm(true);
   }
+  if (
+    PRIMITIVE_VALUE === props[idKey || ID_KEY] &&
+    !(formRef._parentRef && formRef._parentRef._isMultipleForm)
+  )
+    throw new Error(
+      `Invalid: "PRIMITIVE_VALUE" can only be used under "Form.Multiple"`
+    );
 
   const __inputProps = formRef.getInputProps(extraProps);
+  if (
+    PRIMITIVE_VALUE in __inputProps &&
+    props[idKey || ID_KEY] !== PRIMITIVE_VALUE
+  ) {
+    throw new Error(
+      `Invalid: "${
+        props[idKey || ID_KEY]
+      }" cannot add any field to primitive value `
+    );
+  }
   if (!(props[idKey || ID_KEY] in __inputProps) && !ref.current.id) {
     ref.current.id = props[idKey || ID_KEY];
-    if (PRIMITIVE_VALUE in __inputProps) {
+    if (
+      props[idKey || ID_KEY] === PRIMITIVE_VALUE &&
+      Object.values(__inputProps).filter(
+        (_config) => _config._config && _config._config._initiated
+      ).length
+    ) {
       throw new Error(
-        `Invalid: "${
-          props[idKey || ID_KEY]
-        }" cannot add any field to literal value `
+        `Invalid: cannot add id="PRIMITIVE_VALUE" field. Primitive value is always unique. Please remove the other fields in order to use id="PRIMITIVE_VALUE" `
       );
     }
     formRef.modifyFormConfig({
