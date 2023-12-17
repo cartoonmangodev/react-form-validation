@@ -403,15 +403,6 @@ const formValidationHandler = ({
       isTrim = false,
       dontRender
     ) => {
-      const _setErrors = (_error) => {
-        setErrors(
-          {
-            ...errors,
-            [key]: _error || null,
-          },
-          dontRender
-        );
-      };
       const config = _config || formRef.current.formConfig[key] || {};
       let { value, error: validatorError } = config.validator
         ? config.validator(
