@@ -422,10 +422,17 @@ const formValidationHandler = ({
           : true)
       ) {
         error = validatorError;
+        if (
+          (config.trim !== undefined ? config.trim : config.trim || isTrim) ||
+          config.type === "number" ||
+          config.allowOnlyNumber ||
+          config.allowValidNumber
+        )
+          value = _trimStrings(value, config.isNumber);
         if (config.type === "number") {
           if (Number.isNaN(+value) && value !== "")
             return { error, value: values[key], key };
-        } else if (config.allowOnlyNumber)
+        } else if (config.allowOnlyNumber) {
           if (Number.isNaN(+value) && value !== "") {
             error =
               error ||
@@ -433,12 +440,7 @@ const formValidationHandler = ({
                 ? config.message && config.message.allowOnlyNumber
                 : "Only numbers are allowed");
           }
-        if (
-          typeof config.trim !== "undefined"
-            ? config.trim
-            : config.trim || isTrim
-        )
-          value = _trimStrings(value, config.isNumber);
+        }
         if (
           value !== "" &&
           ["string", "number"].includes(typeof value) &&
