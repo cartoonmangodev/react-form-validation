@@ -18,4 +18,4 @@ export default ({ children, ...props }) => (
   <Consumer {...useConsumerHook(props)}>{children}</Consumer>
 );
 
-export { useConsumer } from "./useConsumer";
+export { useFormConsumer } from "./useConsumer";
