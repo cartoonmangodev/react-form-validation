@@ -19,7 +19,8 @@ export default (props = {}) => {
 
   const inputConfig = { ...props.inputConfig, ..._inputConfig };
 
-  const { formRef, renderForm } = useContext(FormRefContext) || {};
+  const { formRef, renderForm, _rootRef: rootRef } =
+    useContext(FormRefContext) || {};
 
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
 
@@ -83,21 +84,27 @@ export default (props = {}) => {
   useEffect(() => {
     setInputProps();
     return () => {
-      if (_inputFieldProps._fieldConfig) {
-        _inputFieldProps._fieldConfig._initiated = false;
-        if (typeOf(inputConfig) === TYPE_OBJECT)
-          Object.keys(inputConfig).forEach((key) => {
-            _inputFieldProps._fieldConfig[key] =
-              _inputFieldProps._defaultConfig[key];
-          });
-      }
-      if (ref.current.id)
-        inputProps[IS_SCHEMA].deleteFormConfig([ref.current.id]);
-      inputProps[IS_SCHEMA].resetFormInput(
-        [props[idKey || ID_KEY]],
-        !!ref.current.id
+      console.log(
+        rootRef.current.dontResetOnUnmount,
+        "rootRef.current.dontResetOnUnmount"
       );
-      inputProps[IS_SCHEMA].onFormChangeCallback();
+      if (!rootRef.current.dontResetOnUnmount) {
+        if (_inputFieldProps._fieldConfig) {
+          _inputFieldProps._fieldConfig._initiated = false;
+          if (typeOf(inputConfig) === TYPE_OBJECT)
+            Object.keys(inputConfig).forEach((key) => {
+              _inputFieldProps._fieldConfig[key] =
+                _inputFieldProps._defaultConfig[key];
+            });
+        }
+        if (ref.current.id)
+          inputProps[IS_SCHEMA].deleteFormConfig([ref.current.id]);
+        inputProps[IS_SCHEMA].resetFormInput(
+          [props[idKey || ID_KEY]],
+          !!ref.current.id
+        );
+        inputProps[IS_SCHEMA].onFormChangeCallback();
+      }
     };
   }, [formRef._formId_]);
 

@@ -80,6 +80,7 @@ export default forwardRef(
       id,
       renderForm: ___renderForm,
       defaultCount = 1,
+      dontResetOnUnmount,
     },
     ref
   ) => {
@@ -96,10 +97,17 @@ export default forwardRef(
       setRefresh: _setRefresh,
       renderForm: _renderForm,
       rootFormRef: _rootFormRef,
+      _rootRef: __rootRef,
     } = useContext(FormRefContext) || {};
 
     const { setInputProps } = useContext(FormContext);
     const idRef = useRef({});
+    const _ref = useRef({});
+    const _rootRef = useRef({});
+
+    const rootRef = __rootRef || _rootRef;
+
+    _ref.current.dontResetOnUnmount = dontResetOnUnmount;
 
     const renderForm =
       ___renderForm !== undefined ? ___renderForm : _renderForm;
@@ -457,23 +465,46 @@ export default forwardRef(
     rootFormRef._formRef.__formRef__.values = rootFormRef._formRef.__formRef__.getValues();
     rootFormRef._formRef.__formRef__.errors = rootFormRef._formRef.__formRef__.getErrors();
 
+    useEffect(
+      () => () => {
+        if (_ref.current.dontResetOnUnmount) {
+          rootRef.current.dontResetOnUnmount = _ref.current.dontResetOnUnmount;
+        }
+      },
+      []
+    );
+
     useEffect(() => {
       formRef._ref(IS_FORMREF)._is_form_initiated = true;
       formRef._renderForm();
       formRef.renderForm();
       return () => {
-        formRef._ref(IS_FORMREF)._is_form_initiated = false;
-        formRef._renderForm();
-        formRef.renderForm();
+        if (!rootRef.current.dontResetOnUnmount) {
+          formRef._ref(IS_FORMREF)._is_form_initiated = false;
+          formRef._renderForm();
+          formRef.renderForm();
+        }
       };
     }, [formRef._formId_]);
 
     useEffect(() => {
       return () => {
-        if (idRef.current.id) {
-          _thisFormRef.deleteFormConfig([idRef.current.id]);
-          _thisFormRef.renderForm();
+        if (rootRef.current.dontResetOnUnmount) {
+          if (!formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState)
+            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState = formRef._ref(
+              IS_FORMREF
+            )[IS_MULTIPLE]._initialValues;
+          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = getValues();
+        } else {
+          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = formRef._ref(
+            IS_FORMREF
+          )[IS_MULTIPLE]._initialState;
         }
+        if (idRef.current.id)
+          if (!rootRef.current.dontResetOnUnmount) {
+            _thisFormRef.deleteFormConfig([idRef.current.id]);
+            // _thisFormRef.renderForm();
+          }
       };
     }, [_thisFormRef._formId_]);
 
@@ -531,6 +562,7 @@ export default forwardRef(
             renderForm,
             setRefresh: __setRefresh,
             rootFormRef: _rootFormRef || _formRef,
+            _rootRef: rootRef,
           }}
         >
           {noAutoLoop

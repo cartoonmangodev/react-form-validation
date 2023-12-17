@@ -559,6 +559,7 @@ const formValidationHandler = ({
             },
             dontRender
           );
+          value = response.value;
           error = response.error;
         }
       }
