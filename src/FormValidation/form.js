@@ -424,7 +424,7 @@ const formValidationHandler = ({
       )
         if (Number.isNaN(+value) && value !== "") return { error, value, key };
       if (
-        !config._noValidate &&
+        (typeof config.validate === "boolean" ? config.validate : true) &&
         config._initiated &&
         (typeof config.isValidateOnChange === "boolean"
           ? config.isValidateOnChange
@@ -475,14 +475,15 @@ const formValidationHandler = ({
           if (
             value !== "" &&
             ["string", "number"].includes(typeof value) &&
-            !Number.isNaN(+value) &&
+            Number.isNaN(+value) &&
             !(config.allowValidNumber ? !!+value : true)
-          )
+          ) {
             error =
               (config.message && config.message.allowValidNumber) !== undefined
                 ? config.message && config.message.allowValidNumber
                 : "Please enter valid number";
-          else if (config.allowOnlyNumber || config.min || config.max)
+            console.log(error);
+          } else if (config.allowOnlyNumber || config.min || config.max)
             if (!Number.isNaN(+value) && value !== "") {
               if (value && (config.min || config.max))
                 if (+value < config.min) {
@@ -496,13 +497,6 @@ const formValidationHandler = ({
                       ? config.message && config.message.max
                       : `Maximum value ${config.max} is allowed`;
                 }
-              setValues(
-                {
-                  ...values,
-                  [key]: value,
-                },
-                dontRender
-              );
             } else {
               if (value && value.length)
                 error =
@@ -510,32 +504,7 @@ const formValidationHandler = ({
                   "undefined"
                     ? config.message && config.message.allowOnlyNumber
                     : "Only numbers are allowed";
-              else
-                setValues(
-                  {
-                    ...values,
-                    [key]: value,
-                  },
-                  dontRender
-                );
             }
-          else {
-            setValues(
-              {
-                ...values,
-                [key]: value,
-              },
-              dontRender
-            );
-          }
-      } else {
-        setValues(
-          {
-            ...values,
-            [key]: value,
-          },
-          dontRender
-        );
       }
       if (typeof config.callback === "function") {
         const response = config.callback(
@@ -546,23 +515,25 @@ const formValidationHandler = ({
             formRef: formRef.current,
             values,
             errors,
-            is_validation_allowed: !config._noValidate,
+            is_validation_allowed:
+              typeof config.validate === "boolean" ? config.validate : true,
           },
           formRef.current.formConfig[key]._config,
           formRef.current.formConfig[key]._commonInputProps
         );
         if (typeOf(response) === TYPE_OBJECT) {
-          setValues(
-            {
-              ...values,
-              [key]: response.value,
-            },
-            dontRender
-          );
-          value = response.value;
-          error = response.error;
+          if (response.value !== undefined) value = response.value;
+          if (response.error !== undefined) error = response.error;
         }
       }
+      if (isSetValue)
+        setValues(
+          {
+            ...values,
+            [key]: value,
+          },
+          dontRender
+        );
       if (isSetError) {
         setErrors(
           {
@@ -1041,7 +1012,7 @@ const formValidationHandler = ({
       let __config = { ...formConfig };
       let __errors = { ...errors };
       Object.entries(_config).forEach(([_key, _value]) => {
-        __config[_key]._noValidate = !_value;
+        __config[_key].validate = _value;
         if (!_value) __errors[_key] = null;
       });
       setFormConfig(__config, Object.keys(_config));
