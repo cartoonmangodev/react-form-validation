@@ -92,9 +92,23 @@ export default forwardRef(
 
     let formRef = getFormRef(___formRef, id);
 
+    if (
+      _formRef &&
+      __formRef &&
+      (__formRef.formId === _formRef.formId ||
+        _formRef.formId === rootFormRef.formId)
+    )
+      throw new Error(
+        'Invalid: Formref are not valid. Cannot be used formref inside nested formref. Please use "id" instead'
+      );
+
     if (!formRef) {
       if (id) {
         checkFormRefIsValid(___formRef);
+        if (___formRef._isMultipleForm)
+          throw new Error(
+            `Invalid: Cannot use 'id' directly under 'FormRef.Multiple'. Please use formRef props instead `
+          );
         idRef.current.id = id;
         let newFormRef = ___formRef.modifyFormConfig({
           [id]: newSchema({}),

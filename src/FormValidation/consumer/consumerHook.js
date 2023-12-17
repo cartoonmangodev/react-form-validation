@@ -62,7 +62,7 @@ export default (props = {}) => {
     !(formRef._parentRef && formRef._parentRef._isMultipleForm)
   )
     throw new Error(
-      `Invalid: "PRIMITIVE_VALUE" can only be used under "Form.Multiple"`
+      `Invalid: "PRIMITIVE_VALUE" can only be used directly under "Form.Multiple"`
     );
 
   const __inputProps = formRef.getInputProps(extraProps);
