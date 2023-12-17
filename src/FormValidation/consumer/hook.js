@@ -5,7 +5,7 @@ import isEqual from "fast-deep-equal";
 import FormContext, { FormControllerContext, FormRefContext } from "../context";
 import { newObject, typeOf } from "../../utils";
 import { TYPE_OBJECT } from "../../constants";
-import { IS_SCHEMA, IS_LITERAL_VALUE } from "../constants";
+import { IS_SCHEMA, PRIMITIVE_VALUE } from "../constants";
 
 const ID_KEY = "id";
 
@@ -60,7 +60,7 @@ export default (props = {}) => {
   const __inputProps = formRef.getInputProps(extraProps);
   if (!(props[idKey || ID_KEY] in __inputProps) && !ref.current.id) {
     ref.current.id = props[idKey || ID_KEY];
-    if (IS_LITERAL_VALUE in __inputProps) {
+    if (PRIMITIVE_VALUE in __inputProps) {
       throw new Error(
         `Invalid: "${
           props[idKey || ID_KEY]

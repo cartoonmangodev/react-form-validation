@@ -31,7 +31,7 @@ import {
   VALUE,
   ERROR,
   IS_FORMREF,
-  IS_LITERAL_VALUE,
+  PRIMITIVE_VALUE,
 } from "./constants";
 
 import {
@@ -649,10 +649,8 @@ const formValidationHandler = ({
       // if (isSetError) setFormErrors(_errors);
       formRef.current.is_validate_form_triggered = false;
       return {
-        values:
-          IS_LITERAL_VALUE in _values ? _values[IS_LITERAL_VALUE] : _values,
-        errors:
-          IS_LITERAL_VALUE in _errors ? _errors[IS_LITERAL_VALUE] : _errors,
+        values: PRIMITIVE_VALUE in _values ? _values[PRIMITIVE_VALUE] : _values,
+        errors: PRIMITIVE_VALUE in _errors ? _errors[PRIMITIVE_VALUE] : _errors,
         totalErrorCount: isError.length,
         errorCount: isError.length,
         isError: isError.length > 0,
@@ -809,7 +807,10 @@ const formValidationHandler = ({
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._config = {
           config,
+          formId,
           key,
+          keyName: key,
+          lastUpdated: formRef.current.lastUpdated,
           ...rest,
         };
         if (INITIAL_FORM_CONFIG._config.config === undefined)
@@ -832,11 +833,8 @@ const formValidationHandler = ({
         [onBlur]: (e) => onBlurValues(e, key, INITIAL_FORM_CONFIG),
         [value]: values[key],
         [error]: errors[key],
-        keyName: key,
-        lastUpdated: formRef.current.lastUpdated,
       };
       _commonInputProps = {
-        formId,
         ..._commonInputProps,
         ...((INITIAL_FORM_CONFIG &&
           (typeof INITIAL_FORM_CONFIG.inputProps === "function"
@@ -1343,10 +1341,7 @@ const formValidationHandler = ({
     formRef.current.setFormValues = setInitialFormData;
     formRef.current.setFormErrors = setFormErrors;
     formRef.current.getSampleForm = getSampleForm;
-    formRef.current.deleteFormConfig = onDeleteFormConfig;
     formRef.current.validateForm = validateForm;
-    formRef.current.modifyFormConfig = onAddFormConfig(false);
-    formRef.current.resetFormConfig = onAddFormConfig(true);
     formRef.current.resetForm = resetForm(false);
     formRef.current.clearForm = resetForm(true);
 
@@ -1358,6 +1353,9 @@ const formValidationHandler = ({
       formRef.current.setRequired = setRequired;
       formRef.current.resetValues = resetValues;
       formRef.current.clearValues = clearValues;
+      formRef.current.deleteFormConfig = onDeleteFormConfig;
+      formRef.current.modifyFormConfig = onAddFormConfig(false);
+      formRef.current.resetFormConfig = onAddFormConfig(true);
     }
 
     formRef.current.renderForm = renderForm;

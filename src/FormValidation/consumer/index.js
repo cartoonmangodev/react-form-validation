@@ -10,7 +10,8 @@ const Consumer = memo(
   (prev, next) =>
     prev.inputProps.value === next.inputProps.value &&
     prev.inputProps.error === next.inputProps.error &&
-    prev.inputProps.lastUpdated === next.inputProps.lastUpdated
+    (prev._inputFieldConfig && prev._inputFieldConfig._config.lastUpdated) ===
+      (next._inputFieldConfig && next._inputFieldConfig._config.lastUpdated)
 );
 
 export default ({ children, ...props }) => (
