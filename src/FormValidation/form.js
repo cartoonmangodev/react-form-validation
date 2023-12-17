@@ -403,26 +403,26 @@ const formValidationHandler = ({
       isTrim = false,
       dontRender
     ) => {
+      const _setErrors = (_error) => {
+        setErrors(
+          {
+            ...errors,
+            [key]: _error || null,
+          },
+          dontRender
+        );
+      };
       const config = _config || formRef.current.formConfig[key] || {};
-      // eslint-disable-next-line prefer-const
-      let { value, error: validatorError } =
-        config && config.validator
-          ? config.validator(
-              __value,
-              { formRef: formRef.current, values, errors },
-              config._config,
-              config._commonInputProps
-            )
-          : { value: __value };
+      let { value, error: validatorError } = config.validator
+        ? config.validator(
+            __value,
+            { formRef: formRef.current, values, errors },
+            config._config,
+            config._commonInputProps
+          )
+        : { value: __value };
       let error = null;
-      let maxError = null;
-      if (
-        config.allowOnlyNumber ||
-        config.min ||
-        config.max ||
-        config.type === "number"
-      )
-        if (Number.isNaN(+value) && value !== "") return { error, value, key };
+
       if (
         (typeof config.validate === "boolean" ? config.validate : true) &&
         config._initiated &&
@@ -430,81 +430,87 @@ const formValidationHandler = ({
           ? config.isValidateOnChange
           : true)
       ) {
+        error = validatorError;
+        if (config.type === "number") {
+          if (Number.isNaN(+value) && value !== "")
+            return { error, value: values[key], key };
+        } else if (config.allowOnlyNumber)
+          if (Number.isNaN(+value) && value !== "") {
+            error =
+              error ||
+              ((config.message && config.message.allowOnlyNumber) !== undefined
+                ? config.message && config.message.allowOnlyNumber
+                : "Only numbers are allowed");
+          }
         if (
           typeof config.trim !== "undefined"
             ? config.trim
             : config.trim || isTrim
         )
           value = _trimStrings(value, config.isNumber);
+        if (
+          value !== "" &&
+          ["string", "number"].includes(typeof value) &&
+          Number.isNaN(+value) &&
+          !(config.allowValidNumber ? !!+value : true)
+        ) {
+          error =
+            error ||
+            ((config.message && config.message.allowValidNumber) !== undefined
+              ? config.message && config.message.allowValidNumber
+              : "Please enter valid number");
+        }
         if (config.maxLength && (value || "").length > config.maxLength) {
-          maxError =
-            typeof (config.message && config.message.maxLength) !== "undefined"
+          error =
+            error ||
+            (typeof (config.message && config.message.maxLength) !== "undefined"
               ? config.message.maxLength
-              : `maximum ${config.maxLength} characters are allowed`;
+              : `maximum ${config.maxLength} characters are allowed`);
           // value = value.slice(0, config.maxLength);
         }
 
-        if (config) {
+        error =
+          error ||
+          Validate(value, config.type, {
+            key,
+            optional: config.optional,
+            minLength: config.minLength,
+            message: config.message,
+            maxLength: config.maxLength,
+            length: config.length,
+            ...config,
+          });
+        if (
+          value &&
+          config.match &&
+          typeof config.match === "string" &&
+          values[config.match]
+        )
           error =
-            validatorError ||
-            Validate(value, config.type, {
-              key,
-              optional: config.optional,
-              minLength: config.minLength,
-              message: config.message,
-              maxLength: config.maxLength,
-              length: config.length,
-              ...config,
-            }) ||
-            maxError;
-          if (
-            value &&
-            config.match &&
-            typeof config.match === "string" &&
-            values[config.match]
-          )
-            error =
-              values[config.match] !== value
-                ? typeof (config.message && config.message.match) !==
-                  "undefined"
-                  ? config.message.match
-                  : `${key} not matching with ${config.match}`
-                : maxError;
-        }
-        if (key && isSetValue)
-          if (
-            value !== "" &&
-            ["string", "number"].includes(typeof value) &&
-            Number.isNaN(+value) &&
-            !(config.allowValidNumber ? !!+value : true)
-          ) {
-            error =
-              (config.message && config.message.allowValidNumber) !== undefined
-                ? config.message && config.message.allowValidNumber
-                : "Please enter valid number";
-            console.log(error);
-          } else if (config.allowOnlyNumber || config.min || config.max)
-            if (!Number.isNaN(+value) && value !== "") {
-              if (value && (config.min || config.max))
-                if (+value < config.min) {
-                  error =
-                    (config.message && config.message.min) !== undefined
-                      ? config.message && config.message.min
-                      : `Minimum value ${config.min} is required`;
-                } else if (+value > config.max) {
-                  error =
-                    (config.message && config.message.max) !== undefined
-                      ? config.message && config.message.max
-                      : `Maximum value ${config.max} is allowed`;
-                }
-            } else {
-              if (value && value.length)
+            error ||
+            (values[config.match] !== value
+              ? typeof (config.message && config.message.match) !== "undefined"
+                ? config.message.match
+                : `${key} not matching with ${config.match}`
+              : null);
+
+        if (config.allowOnlyNumber || config.min || config.max)
+          if (!Number.isNaN(+value) && value !== "") {
+            if (value && (config.min || config.max))
+              if (+value < config.min) {
                 error =
-                  typeof (config.message && config.message.allowOnlyNumber) !==
-                  "undefined"
-                    ? config.message && config.message.allowOnlyNumber
-                    : "Only numbers are allowed";
-            }
+                  error ||
+                  ((config.message && config.message.min) !== undefined
+                    ? config.message && config.message.min
+                    : `Minimum value ${config.min} is required`);
+              } else if (+value > config.max) {
+                error =
+                  error ||
+                  ((config.message && config.message.max) !== undefined
+                    ? config.message && config.message.max
+                    : `Maximum value ${config.max} is allowed`);
+              }
+          }
       }
       if (typeof config.callback === "function") {
         const response = config.callback(
