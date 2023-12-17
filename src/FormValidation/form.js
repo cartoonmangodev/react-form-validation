@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
 import {
-  TYPE_BOOLEAN,
   TYPE_OBJECT,
   TYPE_FUNCTION,
   TYPE_STRING,
@@ -736,7 +735,7 @@ const formValidationHandler = ({
       const _values = { ...values };
       const _errors = { ...errors };
       clearKeys.forEach((_key) => {
-        if (isDeleteKey && !_key in initialValues) {
+        if (isDeleteKey && !(_key in initialValues)) {
           delete _values[_key];
           delete _errors[_key];
         } else {
