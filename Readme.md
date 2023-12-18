@@ -110,14 +110,69 @@ const BasicForm = () => {
   const { formRef, formId } = useFormHook();
   return (
     <Form.Provider formRef={formRef}>
-      <InputField id="name">
-      <InputField id="age">
-      <InputField id="company">
-      <Button onClick={formRef.validateForm}>
+      <InputField id="name" />
+      <InputField id="age" />
+      <InputField id="company" />
+      <Button onClick={formRef.validateForm}>Submit</Button>
     </Form.Provider>
-  )
+  );
 };
 ```
+
+### # creating nested form hook config
+
+```js
+/* hook.js */
+import { newSchema } from "@cartoonmangodev/react-form";
+import { useForm } from "./form.js";
+
+const FORM_CONFIG = {
+  person: newSchema({
+    name: { isRequired: true },
+    age: { min: 18, max: 16 },
+    comapny: { isRequired: true },
+  }),
+};
+export const useFormHook = () =>
+  useForm({
+    FORM_CONFIG,
+  });
+```
+
+### # nested form
+
+```js
+/* schemaForm.js */
+import { useEffect, useRef } from "react";
+import { useFormHook, Form } from "./hook.js";
+import { InputField } from "./customInputField.js";
+
+const schemaForm = () => {
+  const { formRef, formId } = useFormHook();
+  console.log(formRef);
+  const submit = useCallback(() => {
+    console.log(formRef.validateForm());
+  }, []);
+  return (
+    <Form.Provider formRef={formRef}>
+      <Form.Provider id="person">
+        <InputField id="name" />
+        <InputField id="age" />
+        <InputField id="company" />
+      </Form.Provider>
+      <Button onClick={submit}>Submit</Button>
+    </Form.Provider>
+  );
+};
+```
+
+1. **This is the image from console FormRef object**
+
+![  ](./images/1.png)
+
+1. **This is the image from console after submitting form**
+
+![  ](./images/2.png)
 
 ## # inputProps - `<Object>`
 
@@ -148,10 +203,11 @@ const BasicForm = () => {
 |      callback      |     null      | function |       `({value}) => {console.log('do something')}`       |   callback will triggered after validation   |
 |  isValidateOnBlur  |     true      | Boolean  |                     `true or false`                      |            validate field on blur            |
 | isValidateOnChange |     true      | Boolean  |                     `true or false`                      |           validate field on change           |
+|      vatidate      |     true      | Boolean  |                     `true or false`                      |           validate field on change           |
 
 ## # Whether this package will support for react-native
 
-#### **Yes** ,this package will support for both [react](https://reactjs.org/) and [react-native](https://reactnative.dev/)
+#### **Yes**, this package will support for both [react](https://reactjs.org/) and [react-native](https://reactnative.dev/)
 
 ###
 
