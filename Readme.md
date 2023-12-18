@@ -170,9 +170,78 @@ const schemaForm = () => {
 
 ![  ](./images/1.png)
 
-1. **This is the image from console after submitting form**
+2. **This is the image from console after submitting form**
 
 ![  ](./images/2.png)
+
+### # creating formArray hook config
+
+```js
+/* hook.js */
+import { newFormArray } from "@cartoonmangodev/react-form";
+import { useForm } from "./form.js";
+
+const FORM_CONFIG = {
+  person: newFormArray({
+    name: { isRequired: true },
+    age: { min: 18, max: 16 },
+    comapny: { isRequired: true },
+  }),
+};
+export const useFormHook = () =>
+  useForm({
+    FORM_CONFIG,
+  });
+```
+
+### # FormArray
+
+```js
+/* schemaForm.js */
+import { useEffect, useRef } from "react";
+import { useFormHook, Form } from "./hook.js";
+import { InputField } from "./customInputField.js";
+
+const schemaForm = () => {
+  const { formRef, formId } = useFormHook();
+  console.log(formRef);
+  const submit = useCallback(() => {
+    console.log(formRef.validateForm());
+  }, []);
+  return (
+    <Form.Provider formRef={formRef}>
+      <Form.Multiple id="person">
+        {({ formRef: _formRef, form, formId, count, index }, arrayProps) => (
+          <Form.Provider formRef={_formRef} key={formId}>
+            <InputField id="name" />
+            <InputField id="age" />
+            <InputField id="company" />
+            <button onClick={form.append}>> append</button>
+            <button onClick={form.prepend}>prepend</button>
+            <button onClick={form.delete}>delete</button>
+            <button onClick={form.reset}>reset</button>
+            <button onClick={form.clear}>clear</button>
+            <button onClick={form.move}>move</button>
+            <button onClick={form.swap}>swap</button>
+            <button onClick={form.insert}>insert</button>
+            <button onClick={form.clone}>clone</button>
+            {console.log(arrayProps)}
+          </Form.Provider>
+        )}
+      </Form.Multiple>
+      <Button onClick={submit}>Submit</Button>
+    </Form.Provider>
+  );
+};
+```
+
+![  ](./images/3.png)
+
+![  ](./images/4.png)
+
+**Form Array methods**
+
+![  ](./images/5.png)
 
 ## # inputProps - `<Object>`
 
@@ -203,7 +272,7 @@ const schemaForm = () => {
 |      callback      |     null      | function |       `({value}) => {console.log('do something')}`       |   callback will triggered after validation   |
 |  isValidateOnBlur  |     true      | Boolean  |                     `true or false`                      |            validate field on blur            |
 | isValidateOnChange |     true      | Boolean  |                     `true or false`                      |           validate field on change           |
-|      vatidate      |     true      | Boolean  |                     `true or false`                      |           validate field on change           |
+|      vatidate      |     true      | Boolean  |                     `true or false`                      |          set validate true or false          |
 
 ## # Whether this package will support for react-native
 
