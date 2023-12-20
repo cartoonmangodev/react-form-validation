@@ -397,10 +397,8 @@ const form = ({ formId }) => {
 |     isRequired     |     false     | Boolean  |                     `true or false`                      | A boolean indicating whether the field is required. Throws an error if the field is empty. |
 |      optional      |     false     | Boolean  |                     `true or false`                      |    A boolean indicating whether validation should occur only if the field has a value.     |
 |        min         |     null      |  number  |                            4                             |                      A number indicating the minimum value required.                       |
-|                    |
 |        max         |     null      |  number  |                            8                             |                      A number indicating the maximum value required.                       |
 |     maxLength      |     null      |  number  |                            7                             |                    A number indicating the maximum characters allowed.                     |
-|                    |
 |     minLength      |     null      |  number  |                            6                             |                    A number indicating the minimum characters required.                    |
 |  allowOnlyNumber   |     false     | Boolean  |                     `true or false`                      |                   A boolean indicating whether only numbers are allowed.                   |
 |  allowValidNumber  |     false     |  number  |                     `true or false`                      |              A number indicating whether the entered number is valid or not.               |
