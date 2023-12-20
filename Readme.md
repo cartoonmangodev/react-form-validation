@@ -383,35 +383,37 @@ const form = ({ formId }) => {
 
 ## # inputProps - `<Object>`
 
-|  Props   | Default Value |   type   |
-| :------: | :-----------: | :------: |
-| onChange |   function    | function |
-|  onBlur  |   function    | function |
-|  value   |      any      | function |
-|  error   |    string     | function |
+|  Props   | Default Value |   type   |                               description                               |
+| :------: | :-----------: | :------: | :---------------------------------------------------------------------: |
+| onChange |   function    | function | A callback function triggered when the value of the component changes.  |
+|  onBlur  |   function    | function | A callback function triggered when the component loses focus (on blur). |
+|  value   |      any      |   any    |                     The current value of the input                      |
+|  error   |    string     |  string  |               An error message associated with the input                |
 
 ## # Form config props - `<Object>`
 
-|       Props        | Default Value |   type   |                          value                           |                 Description                  |
-| :----------------: | :-----------: | :------: | :------------------------------------------------------: | :------------------------------------------: |
-|     isRequired     |     false     | Boolean  |                     `true or false`                      |        throws error if field is empty        |
-|      optional      |     false     | Boolean  |                     `true or false`                      |       validate only if field has value       |
-|        min         |     null      |  number  |                            4                             |            minimum value required            |
-|        max         |     null      |  number  |                            8                             |            maximum value required            |
-|     maxLength      |     null      |  number  |                            7                             |          maximum characters allowed          |
-|     minLength      |     null      |  number  |                            6                             |         minimum characters required          |
-|  allowOnlyNumber   |     false     | Boolean  |                     `true or false`                      |          it will allow only number           |
-|  allowValidNumber  |     false     |  number  |                     `true or false`                      | check whether entered number is valid or not |
-|        type        |     null      |  number  |                    `"email","number"`                    |                validate email                |
-|        trim        |     null      | Boolean  |                     `true or false`                      |             it won't allow space             |
-|      pattern       |     null      |  regex   |                          `/$d/`                          |       validate based on regex pattern        |
-|      message       |     null      |  object  |         `{min: 'mimimum 8 characters required'}`         |   will overwrite the default error message   |
-|     validator      |     null      | function | `(value) => ({error: value < 5 ? 'Error' : null,value})` |              custom validation               |
-|      callback      |     null      | function |       `({value}) => {console.log('do something')}`       |   callback will triggered after validation   |
-|  isValidateOnBlur  |     true      | Boolean  |                     `true or false`                      |            validate field on blur            |
-| isValidateOnChange |     true      | Boolean  |                     `true or false`                      |           validate field on change           |
-|      vatidate      |     true      | Boolean  |                     `true or false`                      |          set validate true or false          |
-|      default       |      ''       |   any    |               `string or object or number`               |         set the default form values          |
+|       Props        | Default Value |   type   |                          value                           |                                        Description                                         |
+| :----------------: | :-----------: | :------: | :------------------------------------------------------: | :----------------------------------------------------------------------------------------: |
+|     isRequired     |     false     | Boolean  |                     `true or false`                      | A boolean indicating whether the field is required. Throws an error if the field is empty. |
+|      optional      |     false     | Boolean  |                     `true or false`                      |    A boolean indicating whether validation should occur only if the field has a value.     |
+|        min         |     null      |  number  |                            4                             |                      A number indicating the minimum value required.                       |
+|                    |
+|        max         |     null      |  number  |                            8                             |                      A number indicating the maximum value required.                       |
+|     maxLength      |     null      |  number  |                            7                             |                    A number indicating the maximum characters allowed.                     |
+|                    |
+|     minLength      |     null      |  number  |                            6                             |                    A number indicating the minimum characters required.                    |
+|  allowOnlyNumber   |     false     | Boolean  |                     `true or false`                      |                   A boolean indicating whether only numbers are allowed.                   |
+|  allowValidNumber  |     false     |  number  |                     `true or false`                      |              A number indicating whether the entered number is valid or not.               |
+|        type        |     null      |  number  |                    `"email","number"`                    |            A string indicating the type of validation (`"email"`, `"number"`).             |
+|        trim        |     null      | Boolean  |                     `true or false`                      |                      A boolean indicating whether spaces are allowed.                      |
+|      pattern       |     null      |  regex   |                          `/$d/`                          |                    A regular expression for custom pattern validation.                     |
+|      message       |     null      |  object  |         `{min: 'mimimum 8 characters required'}`         |        An object providing custom error messages for different validation scenarios        |
+|     validator      |     null      | function | `(value) => ({error: value < 5 ? 'Error' : null,value})` |                          A function for custom validation logic.                           |
+|      callback      |     null      | function |       `({value}) => {console.log('do something')}`       |                            A function called after validation.                             |
+|  isValidateOnBlur  |     true      | Boolean  |                     `true or false`                      |                A boolean indicating whether to validate the field on blur.                 |
+| isValidateOnChange |     true      | Boolean  |                     `true or false`                      |                A boolean indicating whether to validate the field on change                |
+|      vatidate      |     true      | Boolean  |                     `true or false`                      |              A boolean indicating whether to set validation to true or false.              |
+|      default       |      ''       |   any    |               `string or object or number`               |                              The default value for the field                               |
 
 ## # getValues method
 
