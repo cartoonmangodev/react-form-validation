@@ -1,6 +1,6 @@
 # @cartoonmangodev/react-form-handler
 
-[@cartoonmangodev/react-form-handler]() is a package for react which simplifies form handling process. it simplifies the implementaion of form validation and error handling.
+[@cartoonmangodev/react-form-handler]() is a package for react which simplifies form handling process. It also simplifies the implementaion of form validation and error handling.
 
 ## # Installation
 
@@ -27,7 +27,7 @@ $ yarn add @cartoonmangodev/react-form-handler
 ### # Form Configuration
 
     Note:
-    - Need to configure form Provider before start using form hook
+    - Its required to configure form Provider before start using useForm hook
     - Global config (one time configuration)
 
 ```js
@@ -61,6 +61,8 @@ const InputField = React.memo((props) => {
 
 ### # Getting inputprops using context
 
+> ##### **Note:** Mostly use this context way of implementation to avoid component re-rendering on every onChange
+
 ```js
 /* customInputField.js */
 import { Form } from "@cartoonmangodev/react-form";
@@ -90,11 +92,14 @@ import { useForm } from "./form.js";
 const FORM_CONFIG = {
   name: { isRequired: true },
   age: { min: 18, max: 16 },
-  comapny: { isRequired: true },
+  company: { isRequired: true },
 };
 export const useFormHook = () =>
   useForm({
     FORM_CONFIG,
+    initialState: {
+      name: "",
+    },
   });
 ```
 
@@ -243,6 +248,19 @@ const schemaForm = () => {
 
 ![  ](./images/5.png)
 
+## # Access FormRef Object using useformRef hook
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  console.log(formRef.getValues());
+  console.log(formRef.getErrors());
+};
+```
+
 ## # inputProps - `<Object>`
 
 |  Props   | Default Value |   type   |
@@ -273,6 +291,452 @@ const schemaForm = () => {
 |  isValidateOnBlur  |     true      | Boolean  |                     `true or false`                      |            validate field on blur            |
 | isValidateOnChange |     true      | Boolean  |                     `true or false`                      |           validate field on change           |
 |      vatidate      |     true      | Boolean  |                     `true or false`                      |          set validate true or false          |
+|      default       |      ''       |   any    |               `string or object or number`               |         set the default form values          |
+
+### # getValues method
+
+**Get form values using getValues method**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  console.log(formRef.getValues());
+};
+```
+
+### # getErrors method
+
+**Get form errors using getErrors method**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  console.log(formRef.getErrors());
+};
+```
+
+### # clearForm method
+
+**clearForm will reset the form values to default**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.clearForm();
+};
+```
+
+### # resetForm method
+
+**resetForm will reset the form values to initialState**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.resetForm();
+};
+```
+
+### # getFormRef method
+
+**getFormRef will be used for nested form to access nested form ref**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.getFormRef(["person"]);
+};
+```
+
+### # getFormRefById method
+
+**getFormRefById similar to useFormRef for accessing formRef based on formId**
+
+```js
+/* hook.js */
+const form = ({ formId }) => {
+  const { formRef: nestedFormRef, formId } = formRef.getFormRefById(formId);
+  console.log(nestedFormRef);
+};
+```
+
+### # renderForm method
+
+**renderForm will manually render the component**
+
+> ### **Note:** By default components are not rendered on every change
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.renderForm();
+};
+```
+
+### # setFormValues method
+
+**setFormValues will be used for prefill form values**
+
+> #### **Note:** By default only keys in the object will be modified. If you want to reset and set new values, set second params to true
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const IS_RESET_FORM = true;
+  formRef.setFormValues(
+    {
+      name: "Person",
+    },
+    IS_RESET_FORM
+  );
+};
+```
+
+### # validateForm method
+
+**validateForm will be used to validate the form**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const onSubmit = () => {
+    console.log(formRef.validateForm());
+  };
+};
+```
+
+### # resetValues method
+
+**validateForm will be used to reset values based on keys**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.resetValues(["name"]);
+};
+```
+
+### # clearValues method
+
+**clearValues will be used to clear values based on keys**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.clearValues(["name"]);
+};
+```
+
+### # deleteFormConfig method
+
+**deleteFormConfig will be used to delete the formConfig**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.deleteFormConfig(["age"]);
+};
+```
+
+### # modifyFormConfig method
+
+**modifyFormConfig will be used to modify the formConfig**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.modifyFormConfig({
+    age: {
+      type: "number",
+    },
+  });
+};
+```
+
+### # resetFormConfig method
+
+**resetFormConfig will be used to reset the formConfig ans set the newConfig**
+
+> ### **Note:** This will remove the old config and set the new config
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.modifyFormConfig({
+    age: {
+      type: "number",
+    },
+  });
+};
+```
+
+# Form Array Props
+
+### # append method
+
+**append will add the new form after the target Form**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { append } = formRef.formArrayProps;
+
+  const onAdd = () => {
+    const targetFormId = __formId__;
+    const values = [{ name: "steve" }];
+    const noOfFormsToBeAdded = 2;
+    append(targetFormId, values, noOfFormsToBeAdded);
+  };
+};
+```
+
+### # prepend method
+
+**prepend will add the new form before the target Form**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { prepend } = formRef.formArrayProps;
+
+  const onAddBefore = () => {
+    const targetFormId = __formId__;
+    const values = [{ name: "steve" }];
+    const noOfFormsToBeAdded = 2;
+    prepend(targetFormId, values, noOfFormsToBeAdded);
+  };
+};
+```
+
+### # delete method
+
+**delete method will be used to delete the target form**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { prepend, delete: deleteForm } = formRef.formArrayProps;
+
+  const onDeleteForm = () => {
+    const targetFormId = [__formId1__, __formId2__];
+    const values = [{ name: "steve" }];
+    deleteForm(targetFormId);
+  };
+};
+```
+
+### # clone method
+
+**clone method will be used to clone the target form**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { prepend, clone } = formRef.formArrayProps;
+
+  const onCloneForm = () => {
+    const sourceFormId = __formId1__;
+    const noOfFormsToBeCloned = 2;
+    clone(sourceFormId, noOfFormsToBeCloned);
+  };
+};
+```
+
+### # clear method
+
+**clear method will be used to clear the target form**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { clear } = formRef.formArrayProps;
+
+  const onClearForm = () => {
+    const formIds = [__formId1__];
+    clear(formIds);
+  };
+};
+```
+
+### # reset method
+
+**reset method will be used to reset the target form**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { prepend, reset } = formRef.formArrayProps;
+
+  const onResetForm = () => {
+    const formIds = [__formId1__];
+    reset(formIds);
+  };
+};
+```
+
+### # move method
+
+**move method will be used to move the target form to particular index position**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { prepend, move } = formRef.formArrayProps;
+
+  const onMoveForm = () => {
+    const currentFormId = __formId1__;
+    const targetFormId = __formId2__;
+    move(currentFormId, targetFormId);
+  };
+};
+```
+
+### # swap method
+
+**move method will be used to swap between two forms**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { prepend, swap } = formRef.formArrayProps;
+
+  const onSwapForm = () => {
+    const currentFormId = __formId1__;
+    const targetFormId = __formId2__;
+    forms(currentFormId, targetFormId);
+  };
+};
+```
+
+### # insert method
+
+**insert method will be used to insert the new form on particular index**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { prepend, insert } = formRef.formArrayProps;
+
+  const onInsertForm = () => {
+    const targetFormId = __formId__;
+    const values = [{ name: "steve" }];
+    const noOfFormsToBeInserted = 2;
+    insert(targetFormId, values, noOfFormsToBeInserted);
+  };
+};
+```
+
+### # setFormRefArray method
+
+**setFormRefArray method will be used to change the order of the form ans set the new form array**
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  const { setFormRefArray } = formRef;
+
+  const onSetFormRefArray = () => {
+    setFormRefArray([formRef, formRef]);
+  };
+};
+```
+
+### # Render Form
+
+> ### **Note:**
+>
+> #### - set to true only if required. By default it will be false
+>
+> #### - It will render component on every form change. Please use it only if required
+
+```js
+/* hook.js */
+import { newSchema } from "@cartoonmangodev/react-form";
+import { useForm } from "./form.js";
+
+const FORM_CONFIG = {
+  person: newSchema({
+    name: { isRequired: true },
+    age: { min: 18, max: 16 },
+    comapny: { isRequired: true },
+  }),
+};
+const RENDER_FORM = true;
+export const useFormHook = () =>
+  useForm({
+    FORM_CONFIG,
+    renderForm: RENDER_FORM,
+  });
+```
 
 ## # Whether this package will support for react-native
 
@@ -291,3 +755,7 @@ Please make sure to update tests as appropriate.
 ## License
 
 Copyright (c) 2023-present Chrissie Fernando
+
+```
+
+```

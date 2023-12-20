@@ -1316,11 +1316,9 @@ const formValidationHandler = ({
     formRef.current.clearForm = resetForm(true);
 
     if (!formRef.current._isMultipleForm) {
-      formRef.current.setValidate = setValidate;
-      formRef.current.setOptional = setOptional;
-      formRef.current.setRequired = setRequired;
-      formRef.current.setOptional = setOptional;
-      formRef.current.setRequired = setRequired;
+      FormRef.prototype.setValidate = setValidate;
+      FormRef.prototype.setRequired = setRequired;
+      FormRef.prototype.setOptional = setOptional;
       formRef.current.resetValues = resetValues;
       formRef.current.clearValues = clearValues;
       formRef.current.deleteFormConfig = onDeleteFormConfig;
