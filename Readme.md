@@ -50,9 +50,11 @@ export { useForm, useFormRef, Form };
 
 ## Hooks and Components
 
-> **useForm:** A hook for managing form state.
-> **useFormRef:** A hook for obtaining a reference to the form.
-> **Form:** A form component for use in React components.
+> **`useForm:`** A hook for managing form state.
+
+> **`useFormRef:`** A hook for obtaining a reference to the form.
+
+> **`Form:`** A form component for use in React components.
 
 ## # Getting inputprops using hook
 
@@ -73,13 +75,13 @@ const InputField = React.memo((props) => {
 });
 ```
 
-## # Getting inputprops using context
-
-> ### **Note:** Avoiding Unnecessary Re-renders
+> ## **Note:** Avoiding Unnecessary Re-renders
 
 ##### - One significant advantage of using the context-based implementation provided by **`@cartoonmangodev/react-form-handler`** is its ability to minimize unnecessary component re-renders on every onChange.
 
 ##### - By managing form state through the FormProvider, components subscribing to the form state will only re-render when relevant form data changes. This can lead to improved performance in scenarios where frequent re-renders are not desired.
+
+## # Getting inputprops using context
 
 ```js
 /* customInputField.js */
