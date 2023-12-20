@@ -1,6 +1,14 @@
 # @cartoonmangodev/react-form-handler
 
-[@cartoonmangodev/react-form-handler]() is a package for react which simplifies form handling process. It also simplifies the implementaion of form validation and error handling.
+[@cartoonmangodev/react-form-handler]() is a React library for simplifying form validation. It provides a set of utilities and hooks to handle client-side form validation with ease.
+
+## Key features include:
+
+> **Declarative Validation Rules:** Define validation rules in a declarative manner.
+
+> **Dynamic Validation:** Handle dynamic validation based on user input.
+
+> **Custom Validation Functions:** Support for custom validation functions.
 
 ## # Installation
 
@@ -24,7 +32,7 @@ $ yarn add @cartoonmangodev/react-form-handler
 
 ## # Basic usage
 
-### # Form Configuration
+## # Form Configuration
 
     Note:
     - Its required to configure form Provider before start using useForm hook
@@ -40,7 +48,13 @@ const { useForm, useFormRef } = FormProvider({
 export { useForm, useFormRef, Form };
 ```
 
-### # Getting inputprops using hook
+## Hooks and Components
+
+> **useForm:** A hook for managing form state.
+> **useFormRef:** A hook for obtaining a reference to the form.
+> **Form:** A form component for use in React components.
+
+## # Getting inputprops using hook
 
 ```js
 /* customInputField.js */
@@ -59,9 +73,13 @@ const InputField = React.memo((props) => {
 });
 ```
 
-### # Getting inputprops using context
+## # Getting inputprops using context
 
-> ##### **Note:** Mostly use this context way of implementation to avoid component re-rendering on every onChange
+> ### **Note:** Avoiding Unnecessary Re-renders
+
+##### - One significant advantage of using the context-based implementation provided by **`@cartoonmangodev/react-form-handler`** is its ability to minimize unnecessary component re-renders on every onChange.
+
+##### - By managing form state through the FormProvider, components subscribing to the form state will only re-render when relevant form data changes. This can lead to improved performance in scenarios where frequent re-renders are not desired.
 
 ```js
 /* customInputField.js */
@@ -83,12 +101,45 @@ export const InputField = React.memo((props) => {
 });
 ```
 
-### # creating basic form hook config
+## # creating basic form hook config
+
+#### - Import
 
 ```js
 /* hook.js */
 import { useForm } from "./form.js";
+```
 
+#### - Form Configuration
+
+**Define your form configuration using `FORM_CONFIG`. Each field in the form has specific validation rules.**
+
+```js
+const FORM_CONFIG = {
+  name: { isRequired: true },
+  age: { min: 18, max: 16 },
+  company: { isRequired: true },
+};
+```
+
+#### - Initialization
+
+**Initialize the form hook using `useForm` and provide the `FORM_CONFIG` and initial state.**
+
+```js
+export const useFormHook = () =>
+  useForm({
+    FORM_CONFIG,
+    initialState: {
+      name: "",
+    },
+  });
+```
+
+### Usage
+
+```js
+import { useForm } from "./form.js";
 const FORM_CONFIG = {
   name: { isRequired: true },
   age: { min: 18, max: 16 },
@@ -103,7 +154,37 @@ export const useFormHook = () =>
   });
 ```
 
-### # using form hook in component
+## # using form hook in component
+
+#### - Import
+
+```js
+/* basicForm.js */
+import { useEffect, useRef } from "react";
+import { useFormHook, Form } from "./hook.js";
+import { InputField } from "./customInputField.js";
+```
+
+#### - Component Definition
+
+**The BasicForm component utilizes the `useFormHook` to manage form state and the Form.**
+**`Form.Provider` to wrap the form elements.**
+
+```js
+const BasicForm = () => {
+  const { formRef, formId } = useFormHook();
+  return (
+    <Form.Provider formRef={formRef}>
+      <InputField id="name" />
+      <InputField id="age" />
+      <InputField id="company" />
+      <Button onClick={formRef.validateForm}>Submit</Button>
+    </Form.Provider>
+  );
+};
+```
+
+### Usage
 
 ```js
 /* basicForm.js */
@@ -122,9 +203,49 @@ const BasicForm = () => {
     </Form.Provider>
   );
 };
+
+export BasicForm;
 ```
 
-### # creating nested form hook config
+## # creating nested form hook config
+
+#### - Import
+
+```js
+/* basicForm.js */
+import { newSchema } from "@cartoonmangodev/react-form";
+import { useForm } from "./form.js";
+```
+
+#### - Form Configuration
+
+**Define your nested form configuration using `newSchema`. In this example, we have a person schema with nested properties.**
+
+```js
+const FORM_CONFIG = {
+  person: newSchema({
+    name: { isRequired: true },
+    age: { min: 18, max: 16 },
+    company: { isRequired: true },
+  }),
+};
+```
+
+#### - Initialization
+
+**Initialize the form hook using `useForm` and provide the `FORM_CONFIG` with nested schema.**
+
+```js
+const FORM_CONFIG = {
+  person: newSchema({
+    name: { isRequired: true },
+    age: { min: 18, max: 16 },
+    company: { isRequired: true },
+  }),
+};
+```
+
+### Usage
 
 ```js
 /* hook.js */
@@ -135,7 +256,7 @@ const FORM_CONFIG = {
   person: newSchema({
     name: { isRequired: true },
     age: { min: 18, max: 16 },
-    comapny: { isRequired: true },
+    company: { isRequired: true },
   }),
 };
 export const useFormHook = () =>
@@ -144,7 +265,7 @@ export const useFormHook = () =>
   });
 ```
 
-### # nested form
+## # nested form
 
 ```js
 /* schemaForm.js */
@@ -179,7 +300,7 @@ const schemaForm = () => {
 
 ![  ](./images/2.png)
 
-### # creating formArray hook config
+## # creating formArray hook config
 
 ```js
 /* hook.js */
@@ -199,7 +320,7 @@ export const useFormHook = () =>
   });
 ```
 
-### # FormArray
+## # FormArray
 
 ```js
 /* schemaForm.js */
@@ -293,7 +414,7 @@ const form = ({ formId }) => {
 |      vatidate      |     true      | Boolean  |                     `true or false`                      |          set validate true or false          |
 |      default       |      ''       |   any    |               `string or object or number`               |         set the default form values          |
 
-### # getValues method
+## # getValues method
 
 **Get form values using getValues method**
 
@@ -307,7 +428,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # getErrors method
+## # getErrors method
 
 **Get form errors using getErrors method**
 
@@ -321,7 +442,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # clearForm method
+## # clearForm method
 
 **clearForm will reset the form values to default**
 
@@ -335,7 +456,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # resetForm method
+## # resetForm method
 
 **resetForm will reset the form values to initialState**
 
@@ -349,7 +470,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # getFormRef method
+## # getFormRef method
 
 **getFormRef will be used for nested form to access nested form ref**
 
@@ -363,7 +484,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # getFormRefById method
+## # getFormRefById method
 
 **getFormRefById similar to useFormRef for accessing formRef based on formId**
 
@@ -375,11 +496,11 @@ const form = ({ formId }) => {
 };
 ```
 
-### # renderForm method
+## # renderForm method
 
 **renderForm will manually render the component**
 
-> ### **Note:** By default components are not rendered on every change
+> #### **Note:** By default components are not rendered on every change
 
 ```js
 /* hook.js */
@@ -391,7 +512,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # setFormValues method
+## # setFormValues method
 
 **setFormValues will be used for prefill form values**
 
@@ -413,7 +534,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # validateForm method
+## # validateForm method
 
 **validateForm will be used to validate the form**
 
@@ -429,7 +550,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # resetValues method
+## # resetValues method
 
 **validateForm will be used to reset values based on keys**
 
@@ -443,7 +564,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # clearValues method
+## # clearValues method
 
 **clearValues will be used to clear values based on keys**
 
@@ -457,7 +578,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # deleteFormConfig method
+## # deleteFormConfig method
 
 **deleteFormConfig will be used to delete the formConfig**
 
@@ -471,7 +592,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # modifyFormConfig method
+## # modifyFormConfig method
 
 **modifyFormConfig will be used to modify the formConfig**
 
@@ -489,7 +610,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # resetFormConfig method
+## # resetFormConfig method
 
 **resetFormConfig will be used to reset the formConfig ans set the newConfig**
 
@@ -511,7 +632,7 @@ const form = ({ formId }) => {
 
 # Form Array Props
 
-### # append method
+## # append method
 
 **append will add the new form after the target Form**
 
@@ -532,7 +653,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # prepend method
+## # prepend method
 
 **prepend will add the new form before the target Form**
 
@@ -553,7 +674,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # delete method
+## # delete method
 
 **delete method will be used to delete the target form**
 
@@ -573,7 +694,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # clone method
+## # clone method
 
 **clone method will be used to clone the target form**
 
@@ -593,7 +714,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # clear method
+## # clear method
 
 **clear method will be used to clear the target form**
 
@@ -612,7 +733,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # reset method
+## # reset method
 
 **reset method will be used to reset the target form**
 
@@ -631,7 +752,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # move method
+## # move method
 
 **move method will be used to move the target form to particular index position**
 
@@ -651,7 +772,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # swap method
+## # swap method
 
 **move method will be used to swap between two forms**
 
@@ -671,7 +792,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # insert method
+## # insert method
 
 **insert method will be used to insert the new form on particular index**
 
@@ -692,7 +813,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # setFormRefArray method
+## # setFormRefArray method
 
 **setFormRefArray method will be used to change the order of the form ans set the new form array**
 
@@ -710,7 +831,7 @@ const form = ({ formId }) => {
 };
 ```
 
-### # Render Form
+## # Render Form
 
 > ### **Note:**
 >
