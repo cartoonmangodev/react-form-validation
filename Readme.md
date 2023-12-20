@@ -77,9 +77,9 @@ const InputField = React.memo((props) => {
 
 > ## **Note:** Avoiding Unnecessary Re-renders
 
-##### - One significant advantage of using the context-based implementation provided by **`@cartoonmangodev/react-form-handler`** is its ability to minimize unnecessary component re-renders on every onChange.
+#### - One significant advantage of using the context-based implementation provided by **`@cartoonmangodev/react-form-handler`** is its ability to minimize unnecessary component re-renders on every onChange.
 
-##### - By managing form state through the FormProvider, components subscribing to the form state will only re-render when relevant form data changes. This can lead to improved performance in scenarios where frequent re-renders are not desired.
+#### - By managing form state through the FormProvider, components subscribing to the form state will only re-render when relevant form data changes. This can lead to improved performance in scenarios where frequent re-renders are not desired.
 
 ## # Getting inputprops using context
 
@@ -105,14 +105,14 @@ export const InputField = React.memo((props) => {
 
 ## # creating basic form hook config
 
-#### - Import
+### - Import
 
 ```js
 /* hook.js */
 import { useForm } from "./form.js";
 ```
 
-#### - Form Configuration
+### - Form Configuration
 
 **Define your form configuration using `FORM_CONFIG`. Each field in the form has specific validation rules.**
 
@@ -124,7 +124,7 @@ const FORM_CONFIG = {
 };
 ```
 
-#### - Initialization
+### - Initialization
 
 **Initialize the form hook using `useForm` and provide the `FORM_CONFIG` and initial state.**
 
@@ -158,7 +158,7 @@ export const useFormHook = () =>
 
 ## # using form hook in component
 
-#### - Import
+### - Import
 
 ```js
 /* basicForm.js */
@@ -167,7 +167,7 @@ import { useFormHook, Form } from "./hook.js";
 import { InputField } from "./customInputField.js";
 ```
 
-#### - Component Definition
+### - Component Definition
 
 **The BasicForm component utilizes the `useFormHook` to manage form state and the Form.**
 **`Form.Provider` to wrap the form elements.**
@@ -211,7 +211,7 @@ export BasicForm;
 
 ## # creating nested form hook config
 
-#### - Import
+### - Import
 
 ```js
 /* basicForm.js */
@@ -219,7 +219,7 @@ import { newSchema } from "@cartoonmangodev/react-form";
 import { useForm } from "./form.js";
 ```
 
-#### - Form Configuration
+### - Form Configuration
 
 **Define your nested form configuration using `newSchema`. In this example, we have a person schema with nested properties.**
 
@@ -233,18 +233,15 @@ const FORM_CONFIG = {
 };
 ```
 
-#### - Initialization
+### - Initialization
 
 **Initialize the form hook using `useForm` and provide the `FORM_CONFIG` with nested schema.**
 
 ```js
-const FORM_CONFIG = {
-  person: newSchema({
-    name: { isRequired: true },
-    age: { min: 18, max: 16 },
-    company: { isRequired: true },
-  }),
-};
+export const useFormHook = () =>
+  useForm({
+    FORM_CONFIG,
+  });
 ```
 
 ### Usage
@@ -837,9 +834,9 @@ const form = ({ formId }) => {
 
 > ### **Note:**
 >
-> #### - set to true only if required. By default it will be false
+> ### - set to true only if required. By default it will be false
 >
-> #### - It will render component on every form change. Please use it only if required
+> ### - It will render component on every form change. Please use it only if required
 
 ```js
 /* hook.js */
