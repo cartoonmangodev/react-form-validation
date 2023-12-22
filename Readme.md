@@ -39,19 +39,16 @@ export const { useForm, useFormRef } = FormProvider();
 
 /* hook.js */
 import { useForm } from "./form.js";
-const FORM_CONFIG = {
-  name: { isRequired: true },
-  age: { min: 18, max: 16 },
-};
-
 export const useFormHook = () =>
   useForm({
-    FORM_CONFIG,
+    FORM_CONFIG: {
+      name: { isRequired: true },
+      age: { min: 18, max: 16 },
+    },
   });
 
 /* customInputField.js */
 import { Form } from "@cartoonmangodev/react-form-handler";
-
 export const InputField = React.memo((props) => {
   const { id, name, ...restProps } = props;
   return (
@@ -69,9 +66,9 @@ export const InputField = React.memo((props) => {
 
 /* basicForm.js */
 import { useEffect, useRef } from "react";
-import { useFormHook, Form } from "./hook.js";
+import { Form } from "@cartoonmangodev/react-form-handler";
+import { useFormHook } from "./hook.js";
 import { InputField } from "./customInputField.js";
-
 export const BasicForm = () => {
   const { formRef, formId } = useFormHook();
   return (
