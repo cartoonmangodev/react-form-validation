@@ -2,8 +2,6 @@
 # coverage
 # build
 node_modules
-lib/
-constants/
 # stats.json
 
 # Cruft
