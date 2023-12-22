@@ -2,7 +2,7 @@
 //   useFormValidationHandlerHook as _useFormValidationHandlerHook,
 //   useMultipleOptionsHook,
 // } from "react-boilerplate-redux-saga-hoc/utils";
-import FormConsumer, { useConsumer } from "./consumer";
+import FormConsumer, { useFormConsumer } from "./consumer";
 import FormProvider from "./provider";
 import MultipleFormProvider from "./multipleProvider";
 import { FormController } from "./controller";
@@ -14,4 +14,4 @@ export const Form = {
   Controller: FormController,
   Multiple: MultipleFormProvider,
 };
-export { useConsumer };
+export { useFormConsumer };

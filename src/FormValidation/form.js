@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
 import {
-  TYPE_BOOLEAN,
   TYPE_OBJECT,
   TYPE_FUNCTION,
   TYPE_STRING,
@@ -404,138 +403,106 @@ const formValidationHandler = ({
       dontRender
     ) => {
       const config = _config || formRef.current.formConfig[key] || {};
-      // eslint-disable-next-line prefer-const
-      let { value, error: validatorError } =
-        config && config.validator
-          ? config.validator(
-              __value,
-              { formRef: formRef.current, values, errors },
-              config._config,
-              config._commonInputProps
-            )
-          : { value: __value };
+      let { value, error: validatorError } = config.validator
+        ? config.validator(
+            __value,
+            { formRef: formRef.current, values, errors },
+            config._config,
+            config._commonInputProps
+          )
+        : { value: __value };
       let error = null;
-      let maxError = null;
+
       if (
-        config.allowOnlyNumber ||
-        config.min ||
-        config.max ||
-        config.type === "number"
-      )
-        if (Number.isNaN(+value) && value !== "") return { error, value, key };
-      if (
-        !config._noValidate &&
+        (typeof config.validate === "boolean" ? config.validate : true) &&
         config._initiated &&
         (typeof config.isValidateOnChange === "boolean"
           ? config.isValidateOnChange
           : true)
       ) {
+        error = validatorError;
         if (
-          typeof config.trim !== "undefined"
-            ? config.trim
-            : config.trim || isTrim
+          (config.trim !== undefined ? config.trim : config.trim || isTrim) ||
+          config.type === "number" ||
+          config.allowOnlyNumber ||
+          config.allowValidNumber
         )
           value = _trimStrings(value, config.isNumber);
+        if (config.type === "number") {
+          if (Number.isNaN(+value) && value !== "")
+            return { error, value: values[key], key };
+        } else if (config.allowOnlyNumber) {
+          if (Number.isNaN(+value) && value !== "") {
+            error =
+              error ||
+              ((config.message && config.message.allowOnlyNumber) !== undefined
+                ? config.message && config.message.allowOnlyNumber
+                : "Only numbers are allowed");
+          }
+        }
+        if (
+          value !== "" &&
+          ["string", "number"].includes(typeof value) &&
+          Number.isNaN(+value) &&
+          !(config.allowValidNumber ? !!+value : true)
+        ) {
+          error =
+            error ||
+            ((config.message && config.message.allowValidNumber) !== undefined
+              ? config.message && config.message.allowValidNumber
+              : "Please enter valid number");
+        }
         if (config.maxLength && (value || "").length > config.maxLength) {
-          maxError =
-            typeof (config.message && config.message.maxLength) !== "undefined"
+          error =
+            error ||
+            (typeof (config.message && config.message.maxLength) !== "undefined"
               ? config.message.maxLength
-              : `maximum ${config.maxLength} characters are allowed`;
+              : `maximum ${config.maxLength} characters are allowed`);
           // value = value.slice(0, config.maxLength);
         }
 
-        if (config) {
+        error =
+          error ||
+          Validate(value, config.type, {
+            key,
+            optional: config.optional,
+            minLength: config.minLength,
+            message: config.message,
+            maxLength: config.maxLength,
+            length: config.length,
+            ...config,
+          });
+        if (
+          value &&
+          config.match &&
+          typeof config.match === "string" &&
+          values[config.match]
+        )
           error =
-            validatorError ||
-            Validate(value, config.type, {
-              key,
-              optional: config.optional,
-              minLength: config.minLength,
-              message: config.message,
-              maxLength: config.maxLength,
-              length: config.length,
-              ...config,
-            }) ||
-            maxError;
-          if (
-            value &&
-            config.match &&
-            typeof config.match === "string" &&
-            values[config.match]
-          )
-            error =
-              values[config.match] !== value
-                ? typeof (config.message && config.message.match) !==
-                  "undefined"
-                  ? config.message.match
-                  : `${key} not matching with ${config.match}`
-                : maxError;
-        }
-        if (key && isSetValue)
-          if (
-            value !== "" &&
-            ["string", "number"].includes(typeof value) &&
-            !Number.isNaN(+value) &&
-            !(config.allowValidNumber ? !!+value : true)
-          )
-            error =
-              (config.message && config.message.allowValidNumber) !== undefined
-                ? config.message && config.message.allowValidNumber
-                : "Please enter valid number";
-          else if (config.allowOnlyNumber || config.min || config.max)
-            if (!Number.isNaN(+value) && value !== "") {
-              if (value && (config.min || config.max))
-                if (+value < config.min) {
-                  error =
-                    (config.message && config.message.min) !== undefined
-                      ? config.message && config.message.min
-                      : `Minimum value ${config.min} is required`;
-                } else if (+value > config.max) {
-                  error =
-                    (config.message && config.message.max) !== undefined
-                      ? config.message && config.message.max
-                      : `Maximum value ${config.max} is allowed`;
-                }
-              setValues(
-                {
-                  ...values,
-                  [key]: value,
-                },
-                dontRender
-              );
-            } else {
-              if (value && value.length)
+            error ||
+            (values[config.match] !== value
+              ? typeof (config.message && config.message.match) !== "undefined"
+                ? config.message.match
+                : `${key} not matching with ${config.match}`
+              : null);
+
+        if (config.allowOnlyNumber || config.min || config.max)
+          if (!Number.isNaN(+value) && value !== "") {
+            if (value && (config.min || config.max))
+              if (+value < config.min) {
                 error =
-                  typeof (config.message && config.message.allowOnlyNumber) !==
-                  "undefined"
-                    ? config.message && config.message.allowOnlyNumber
-                    : "Only numbers are allowed";
-              else
-                setValues(
-                  {
-                    ...values,
-                    [key]: value,
-                  },
-                  dontRender
-                );
-            }
-          else {
-            setValues(
-              {
-                ...values,
-                [key]: value,
-              },
-              dontRender
-            );
+                  error ||
+                  ((config.message && config.message.min) !== undefined
+                    ? config.message && config.message.min
+                    : `Minimum value ${config.min} is required`);
+              } else if (+value > config.max) {
+                error =
+                  error ||
+                  ((config.message && config.message.max) !== undefined
+                    ? config.message && config.message.max
+                    : `Maximum value ${config.max} is allowed`);
+              }
           }
-      } else {
-        setValues(
-          {
-            ...values,
-            [key]: value,
-          },
-          dontRender
-        );
       }
       if (typeof config.callback === "function") {
         const response = config.callback(
@@ -546,22 +513,25 @@ const formValidationHandler = ({
             formRef: formRef.current,
             values,
             errors,
-            is_validation_allowed: !config._noValidate,
+            is_validation_allowed:
+              typeof config.validate === "boolean" ? config.validate : true,
           },
           formRef.current.formConfig[key]._config,
           formRef.current.formConfig[key]._commonInputProps
         );
         if (typeOf(response) === TYPE_OBJECT) {
-          setValues(
-            {
-              ...values,
-              [key]: response.value,
-            },
-            dontRender
-          );
-          error = response.error;
+          if (response.value !== undefined) value = response.value;
+          if (response.error !== undefined) error = response.error;
         }
       }
+      if (isSetValue)
+        setValues(
+          {
+            ...values,
+            [key]: value,
+          },
+          dontRender
+        );
       if (isSetError) {
         setErrors(
           {
@@ -654,6 +624,7 @@ const formValidationHandler = ({
         totalErrorCount: isError.length,
         errorCount: isError.length,
         isError: isError.length > 0,
+        isValid: isError.length > 0,
         isValidatePassed: isError.length === 0,
       };
     };
@@ -675,6 +646,7 @@ const formValidationHandler = ({
           return {
             errorCount: acc.errorCount + obj2.errorCount,
             isError: acc.isError || obj2.isError,
+            isValid: acc.isValid || obj2.isValid,
             isValidatePassed: acc.isValidatePassed || obj2.isValidatePassed,
             totalErrorCount: acc.totalErrorCount + obj2.totalErrorCount,
             errors: newObject(acc.errors, {
@@ -720,6 +692,7 @@ const formValidationHandler = ({
         totalErrorCount: isError.length,
         errorCount: isError.length,
         isError: isError.length > 0,
+        isValid: isError.length > 0,
         isValidatePassed: isError.length === 0,
       };
     };
@@ -765,7 +738,7 @@ const formValidationHandler = ({
       const _values = { ...values };
       const _errors = { ...errors };
       clearKeys.forEach((_key) => {
-        if (isDeleteKey && !_key in initialValues) {
+        if (isDeleteKey && !(_key in initialValues)) {
           delete _values[_key];
           delete _errors[_key];
         } else {
@@ -1040,7 +1013,7 @@ const formValidationHandler = ({
       let __config = { ...formConfig };
       let __errors = { ...errors };
       Object.entries(_config).forEach(([_key, _value]) => {
-        __config[_key]._noValidate = !_value;
+        __config[_key].validate = _value;
         if (!_value) __errors[_key] = null;
       });
       setFormConfig(__config, Object.keys(_config));
@@ -1346,11 +1319,9 @@ const formValidationHandler = ({
     formRef.current.clearForm = resetForm(true);
 
     if (!formRef.current._isMultipleForm) {
-      formRef.current.setValidate = setValidate;
-      formRef.current.setOptional = setOptional;
-      formRef.current.setRequired = setRequired;
-      formRef.current.setOptional = setOptional;
-      formRef.current.setRequired = setRequired;
+      FormRef.prototype.setValidate = setValidate;
+      FormRef.prototype.setRequired = setRequired;
+      FormRef.prototype.setOptional = setOptional;
       formRef.current.resetValues = resetValues;
       formRef.current.clearValues = clearValues;
       formRef.current.deleteFormConfig = onDeleteFormConfig;

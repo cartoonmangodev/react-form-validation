@@ -19,4 +19,5 @@ export {
   ON_BLUR,
   VALUE,
   ERROR,
+  ON_CHANGE_TEXT,
 } from "./FormValidation/constants";

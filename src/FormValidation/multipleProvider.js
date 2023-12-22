@@ -49,6 +49,8 @@ const generateNewFormRef = (
       getFormData: rootFormRef._isRenderForm
         ? __formRef._setRenderForm
         : undefined,
+      _parentRef: formRef,
+      _parentId: formRef.formId,
     })
   );
   return _formRef;
@@ -80,6 +82,7 @@ export default forwardRef(
       id,
       renderForm: ___renderForm,
       defaultCount = 1,
+      dontResetOnUnmount,
     },
     ref
   ) => {
@@ -96,10 +99,17 @@ export default forwardRef(
       setRefresh: _setRefresh,
       renderForm: _renderForm,
       rootFormRef: _rootFormRef,
+      _rootRef: __rootRef,
     } = useContext(FormRefContext) || {};
 
     const { setInputProps } = useContext(FormContext);
     const idRef = useRef({});
+    const _ref = useRef({});
+    const _rootRef = useRef({});
+
+    const rootRef = __rootRef || _rootRef;
+
+    _ref.current.dontResetOnUnmount = dontResetOnUnmount;
 
     const renderForm =
       ___renderForm !== undefined ? ___renderForm : _renderForm;
@@ -131,6 +141,12 @@ export default forwardRef(
     }
 
     checkFormRefIsValid(formRef);
+    if (!formRef._isMultipleForm)
+      throw new Error(
+        id
+          ? `Invalid: This id (${id}) is configured for simple form. Please use the 'Form.Provider'`
+          : `Invalid: This FormRef is configured for simple form. Please use the 'Form.Provider'`
+      );
 
     const valueRef = useRef({});
     const [_, setRefresh] = useState();
@@ -386,6 +402,7 @@ export default forwardRef(
           return {
             errorCount: acc.errorCount + form.errorCount,
             isError: acc.isError || form.isError,
+            isValid: acc.isValid || form.isValid,
             isValidatePassed: acc.isValidatePassed || form.isValidatePassed,
             totalErrorCount: acc.totalErrorCount + form.totalErrorCount,
             errors: acc.errors.concat([form.errors]),
@@ -398,6 +415,7 @@ export default forwardRef(
           errorCount: 0,
           totalErrorCount: 0,
           isError: false,
+          isValid: false,
           isValidatePassed: false,
         }
       );
@@ -457,23 +475,46 @@ export default forwardRef(
     rootFormRef._formRef.__formRef__.values = rootFormRef._formRef.__formRef__.getValues();
     rootFormRef._formRef.__formRef__.errors = rootFormRef._formRef.__formRef__.getErrors();
 
+    useEffect(
+      () => () => {
+        if (_ref.current.dontResetOnUnmount) {
+          rootRef.current.dontResetOnUnmount = _ref.current.dontResetOnUnmount;
+        }
+      },
+      []
+    );
+
     useEffect(() => {
       formRef._ref(IS_FORMREF)._is_form_initiated = true;
       formRef._renderForm();
       formRef.renderForm();
       return () => {
-        formRef._ref(IS_FORMREF)._is_form_initiated = false;
-        formRef._renderForm();
-        formRef.renderForm();
+        if (!rootRef.current.dontResetOnUnmount) {
+          formRef._ref(IS_FORMREF)._is_form_initiated = false;
+          formRef._renderForm();
+          formRef.renderForm();
+        }
       };
     }, [formRef._formId_]);
 
     useEffect(() => {
       return () => {
-        if (idRef.current.id) {
-          _thisFormRef.deleteFormConfig([idRef.current.id]);
-          _thisFormRef.renderForm();
+        if (rootRef.current.dontResetOnUnmount) {
+          if (!formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState)
+            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState = formRef._ref(
+              IS_FORMREF
+            )[IS_MULTIPLE]._initialValues;
+          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = getValues();
+        } else {
+          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = formRef._ref(
+            IS_FORMREF
+          )[IS_MULTIPLE]._initialState;
         }
+        if (idRef.current.id)
+          if (!rootRef.current.dontResetOnUnmount) {
+            _thisFormRef.deleteFormConfig([idRef.current.id]);
+            // _thisFormRef.renderForm();
+          }
       };
     }, [_thisFormRef._formId_]);
 
@@ -531,6 +572,7 @@ export default forwardRef(
             renderForm,
             setRefresh: __setRefresh,
             rootFormRef: _rootFormRef || _formRef,
+            _rootRef: rootRef,
           }}
         >
           {noAutoLoop
