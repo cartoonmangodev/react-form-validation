@@ -35,8 +35,7 @@ $ yarn add react-form-validation-handler
 ```js
 /* form.js */
 import { FormProvider, Form } from "react-form-validation-handler";
-const { useForm, useFormRef } = FormProvider();
-export { useForm, useFormRef, Form };
+export const { useForm, useFormRef } = FormProvider();
 
 /* hook.js */
 import { useForm } from "./form.js";
