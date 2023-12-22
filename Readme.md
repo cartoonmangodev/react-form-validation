@@ -34,7 +34,7 @@ $ yarn add @cartoonmangodev/react-form-handler
 
 ```js
 /* form.js */
-import { FormProvider, Form } from "@cartoonmangodev/react-form";
+import { FormProvider, Form } from "@cartoonmangodev/react-form-handler";
 const { useForm, useFormRef } = FormProvider();
 export { useForm, useFormRef, Form };
 
@@ -51,7 +51,7 @@ export const useFormHook = () =>
   });
 
 /* customInputField.js */
-import { Form } from "@cartoonmangodev/react-form";
+import { Form } from "@cartoonmangodev/react-form-handler";
 
 export const InputField = React.memo((props) => {
   const { id, name, ...restProps } = props;
@@ -95,7 +95,7 @@ export const BasicForm = () => {
 
 ```js
 /* form.js */
-import { FormProvider, Form } from "@cartoonmangodev/react-form";
+import { FormProvider, Form } from "@cartoonmangodev/react-form-handler";
 import {
   ON_CHANGE,
   ON_BLUR,
@@ -123,7 +123,7 @@ export { useForm, useFormRef, Form };
 
 ```js
 /* customInputField.js */
-import { useFormConsumer } from "@cartoonmangodev/react-form";
+import { useFormConsumer } from "@cartoonmangodev/react-form-handler";
 
 const InputField = React.memo((props) => {
   const { id, name, ...restProps } = props;
@@ -148,7 +148,7 @@ const InputField = React.memo((props) => {
 
 ```js
 /* customInputField.js */
-import { Form } from "@cartoonmangodev/react-form";
+import { Form } from "@cartoonmangodev/react-form-handler";
 
 export const InputField = React.memo((props) => {
   const { id, name, ...restProps } = props;
@@ -279,7 +279,7 @@ export BasicForm;
 
 ```js
 /* basicForm.js */
-import { newSchema } from "@cartoonmangodev/react-form";
+import { newSchema } from "@cartoonmangodev/react-form-handler";
 import { useForm } from "./form.js";
 ```
 
@@ -312,7 +312,7 @@ export const useFormHook = () =>
 
 ```js
 /* hook.js */
-import { newSchema } from "@cartoonmangodev/react-form";
+import { newSchema } from "@cartoonmangodev/react-form-handler";
 import { useForm } from "./form.js";
 
 const FORM_CONFIG = {
@@ -367,7 +367,7 @@ const schemaForm = () => {
 
 ```js
 /* hook.js */
-import { newFormArray } from "@cartoonmangodev/react-form";
+import { newFormArray } from "@cartoonmangodev/react-form-handler";
 import { useForm } from "./form.js";
 
 const FORM_CONFIG = {
@@ -913,7 +913,7 @@ const form = ({ formId }) => {
 
 ```js
 /* hook.js */
-import { newSchema } from "@cartoonmangodev/react-form";
+import { newSchema } from "@cartoonmangodev/react-form-handler";
 import { useForm } from "./form.js";
 
 const FORM_CONFIG = {
