@@ -30,6 +30,61 @@ $ yarn add @cartoonmangodev/react-form-handler
 
 [ Beginner Tutorial](https://github.com/cartoonmangodev/react-form-validation) -->
 
+### Basic Example
+
+```js
+/* form.js */
+import { FormProvider, Form } from "@cartoonmangodev/react-form";
+const { useForm, useFormRef } = FormProvider();
+export { useForm, useFormRef, Form };
+
+/* hook.js */
+import { useForm } from "./form.js";
+const FORM_CONFIG = {
+  name: { isRequired: true },
+  age: { min: 18, max: 16 },
+};
+
+export const useFormHook = () =>
+  useForm({
+    FORM_CONFIG,
+  });
+
+/* customInputField.js */
+import { Form } from "@cartoonmangodev/react-form";
+
+export const InputField = React.memo((props) => {
+  const { id, name, ...restProps } = props;
+  return (
+    <Form.Consumer id={id}>
+      {({ inputProps }) => (
+        <div>
+          <div>{name}</div>
+          <input {...inputProps} {...restProps} />
+          {inputProps.error && <span>{inputProps.error}</span>}
+        </div>
+      )}
+    </Form.Consumer>
+  );
+});
+
+/* basicForm.js */
+import { useEffect, useRef } from "react";
+import { useFormHook, Form } from "./hook.js";
+import { InputField } from "./customInputField.js";
+
+export const BasicForm = () => {
+  const { formRef, formId } = useFormHook();
+  return (
+    <Form.Provider formRef={formRef}>
+      <InputField id="name" />
+      <InputField id="age" />
+      <Button onClick={formRef.validateForm}>Submit</Button>
+    </Form.Provider>
+  );
+};
+```
+
 ## # Basic usage
 
 ## # Form Configuration
@@ -41,9 +96,17 @@ $ yarn add @cartoonmangodev/react-form-handler
 ```js
 /* form.js */
 import { FormProvider, Form } from "@cartoonmangodev/react-form";
-import { ON_CHANGE } from "@cartoonmangodev/react-form/constants";
+import {
+  ON_CHANGE,
+  ON_BLUR,
+  ON_CHANGE,
+  ERROR,
+} from "@cartoonmangodev/react-form/constants";
 const { useForm, useFormRef } = FormProvider({
   ON_CHANGE_KEY: ON_CHANGE /* use ON_CHANGE_TEXT if you are using react-native  */,
+  ON_BLUR_KEY: ON_BLUR,
+  VALUE_KEY: VALUE,
+  ERROR_KEY: ERROR,
 });
 export { useForm, useFormRef, Form };
 ```
@@ -129,12 +192,13 @@ const FORM_CONFIG = {
 **Initialize the form hook using `useForm` and provide the `FORM_CONFIG` and initial state.**
 
 ```js
+const initialState = {
+  name: "",
+}; /* optional -  default state */
 export const useFormHook = () =>
   useForm({
     FORM_CONFIG,
-    initialState: {
-      name: "",
-    },
+    initialState,
   });
 ```
 
@@ -359,6 +423,15 @@ const schemaForm = () => {
   );
 };
 ```
+
+### Explanation
+
+> - The `useFormHook` is used to obtain the form reference and form ID.
+> - The `Form.Provider` wraps the entire form and provides context for form handling.
+> - The `Form.Multiple` component is used to handle a dynamic array of form elements.
+> - The `InputField` component is used for each form field within the dynamic array.
+> - Various form manipulation buttons (`append`, `prepend`, `delete`,`reset`,`clear`,`move`,`swap`, `insert`,`clone`,etc.) are provided to showcase the dynamic form functionality.
+> - The `submit` function is a callback that triggers form validation and logs the result.
 
 ![  ](./images/3.png)
 

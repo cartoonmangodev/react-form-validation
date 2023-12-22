@@ -624,6 +624,7 @@ const formValidationHandler = ({
         totalErrorCount: isError.length,
         errorCount: isError.length,
         isError: isError.length > 0,
+        isValid: isError.length > 0,
         isValidatePassed: isError.length === 0,
       };
     };
@@ -645,6 +646,7 @@ const formValidationHandler = ({
           return {
             errorCount: acc.errorCount + obj2.errorCount,
             isError: acc.isError || obj2.isError,
+            isValid: acc.isValid || obj2.isValid,
             isValidatePassed: acc.isValidatePassed || obj2.isValidatePassed,
             totalErrorCount: acc.totalErrorCount + obj2.totalErrorCount,
             errors: newObject(acc.errors, {
@@ -690,6 +692,7 @@ const formValidationHandler = ({
         totalErrorCount: isError.length,
         errorCount: isError.length,
         isError: isError.length > 0,
+        isValid: isError.length > 0,
         isValidatePassed: isError.length === 0,
       };
     };

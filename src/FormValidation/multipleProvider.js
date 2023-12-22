@@ -402,6 +402,7 @@ export default forwardRef(
           return {
             errorCount: acc.errorCount + form.errorCount,
             isError: acc.isError || form.isError,
+            isValid: acc.isValid || form.isValid,
             isValidatePassed: acc.isValidatePassed || form.isValidatePassed,
             totalErrorCount: acc.totalErrorCount + form.totalErrorCount,
             errors: acc.errors.concat([form.errors]),
@@ -414,6 +415,7 @@ export default forwardRef(
           errorCount: 0,
           totalErrorCount: 0,
           isError: false,
+          isValid: false,
           isValidatePassed: false,
         }
       );
