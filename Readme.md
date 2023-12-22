@@ -34,9 +34,8 @@ $ yarn add @cartoonmangodev/react-form-handler
 
 ```js
 /* form.js */
-import { FormProvider, Form } from "@cartoonmangodev/react-form-handler";
-const { useForm, useFormRef } = FormProvider();
-export { useForm, useFormRef, Form };
+import { FormProvider } from "@cartoonmangodev/react-form-handler";
+export const { useForm, useFormRef } = FormProvider();
 
 /* hook.js */
 import { useForm } from "./form.js";
