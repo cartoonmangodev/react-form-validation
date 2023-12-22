@@ -1,7 +1,7 @@
 {
   "name": "@cartoonmangodev/react-form-handler",
   "version": "0.0.12",
-  "description": "@cartoonmangodev/react-form-validation is a React library for simplifying form validation. It provides a set of utilities and hooks to handle client-side form validation with ease.",
+  "description": "@cartoonmangodev/react-form-handler is a React library for simplifying form validation. It provides a set of utilities and hooks to handle client-side form validation with ease.",
   "main": "./lib/index.js",
   "unpkg": "./lib/index.js",
   "module": "./lib/index.js",
