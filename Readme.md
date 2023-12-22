@@ -48,19 +48,16 @@ export const useFormHook = () =>
   });
 
 /* customInputField.js */
-import { Form } from "@cartoonmangodev/react-form-handler";
-export const InputField = React.memo((props) => {
+import { useFormConsumer } from "@cartoonmangodev/react-form-handler";
+const InputField = React.memo((props) => {
   const { id, name, ...restProps } = props;
+  const { inputProps } = useFormConsumer({ id });
   return (
-    <Form.Consumer id={id}>
-      {({ inputProps }) => (
-        <div>
-          <div>{name}</div>
-          <input {...inputProps} {...restProps} />
-          {inputProps.error && <span>{inputProps.error}</span>}
-        </div>
-      )}
-    </Form.Consumer>
+    <div>
+      <div>{name}</div>
+      <input {...inputProps} {...restProps} />
+      {inputProps.error && <span>{inputProps.error}</span>}
+    </div>
   );
 });
 
