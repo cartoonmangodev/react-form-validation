@@ -64,7 +64,7 @@ export const InputField = React.memo((props) => {
 
 /* basicForm.js */
 import { useEffect, useRef } from "react";
-import { Form } from "@cartoonmangodev/react-form-handler";
+import { Form } from "react-form-validation-handler";
 import { useFormHook } from "./hook.js";
 import { InputField } from "./customInputField.js";
 export const BasicForm = () => {
@@ -95,12 +95,8 @@ import {
   ON_BLUR,
   ON_CHANGE,
   ERROR,
-<<<<<<< HEAD
-} from "react-form-validation-handler/constants";
-=======
   ON_CHANGE_TEXT,
-} from "@cartoonmangodev/react-form/constants";
->>>>>>> 0542c07c86f6903dca0c4a965b562b4112d68dab
+} from "react-form-validation-handler/constants";
 const { useForm, useFormRef } = FormProvider({
   ON_CHANGE_KEY: ON_CHANGE /* use ON_CHANGE_TEXT if you are using react-native  */,
   ON_BLUR_KEY: ON_BLUR,
