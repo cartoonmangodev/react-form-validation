@@ -625,7 +625,7 @@ const formValidationHandler = ({
         errorCount: isError.length,
         isError: isError.length > 0,
         isValid: !isError.length,
-        isValidatePassed: isError.length === 0,
+        isValidatePassed: !isError.length,
       };
     };
 
@@ -646,8 +646,8 @@ const formValidationHandler = ({
           return {
             errorCount: acc.errorCount + obj2.errorCount,
             isError: acc.isError || obj2.isError,
-            isValid: acc.isValid || obj2.isValid,
-            isValidatePassed: acc.isValidatePassed || obj2.isValidatePassed,
+            isValid: acc.isValid && obj2.isValid,
+            isValidatePassed: acc.isValidatePassed && obj2.isValidatePassed,
             totalErrorCount: acc.totalErrorCount + obj2.totalErrorCount,
             errors: newObject(acc.errors, {
               [key]: obj2.errors,
@@ -693,7 +693,7 @@ const formValidationHandler = ({
         errorCount: isError.length,
         isError: isError.length > 0,
         isValid: !isError.length,
-        isValidatePassed: isError.length === 0,
+        isValidatePassed: !isError.length,
       };
     };
 
