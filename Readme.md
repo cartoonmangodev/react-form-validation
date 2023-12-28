@@ -1024,7 +1024,7 @@ const Form = () => {
     <Form.Provider formRef={formRef} dontResetOnUnmount>
       <Form.Provider id="step_1">
         <Form.Provider id="person">
-          {() => (
+          {({ values }) => (
             <>
               <InputField id="name" />
               <Form.Controller disabled={!values.name}>
