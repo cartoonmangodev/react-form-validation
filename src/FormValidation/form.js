@@ -624,7 +624,7 @@ const formValidationHandler = ({
         totalErrorCount: isError.length,
         errorCount: isError.length,
         isError: isError.length > 0,
-        isValid: isError.length > 0,
+        isValid: !isError.length,
         isValidatePassed: isError.length === 0,
       };
     };
@@ -692,7 +692,7 @@ const formValidationHandler = ({
         totalErrorCount: isError.length,
         errorCount: isError.length,
         isError: isError.length > 0,
-        isValid: isError.length > 0,
+        isValid: !isError.length,
         isValidatePassed: isError.length === 0,
       };
     };

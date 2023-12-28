@@ -30,7 +30,7 @@ $ yarn add react-form-validation-handler
 
 [ Beginner Tutorial](https://github.com/cartoonmangodev/react-form-validation) -->
 
-### Basic Example
+## # Basic Example
 
 ```js
 /* form.js */
@@ -39,39 +39,34 @@ export const { useForm, useFormRef } = FormProvider();
 
 /* hook.js */
 import { useForm } from "./form.js";
-const FORM_CONFIG = {
-  name: { isRequired: true },
-  age: { min: 18, max: 16 },
-};
-
 export const useFormHook = () =>
   useForm({
-    FORM_CONFIG,
+    FORM_CONFIG: {
+      name: { isRequired: true },
+      age: { min: 18, max: 16 },
+    },
   });
 
 /* customInputField.js */
-import { Form } from "react-form-validation-handler";
+import { useFormConsumer } from "react-form-validation-handler";
 
 export const InputField = React.memo((props) => {
   const { id, name, ...restProps } = props;
+  const { inputProps } = useFormConsumer({ id });
   return (
-    <Form.Consumer id={id}>
-      {({ inputProps }) => (
-        <div>
-          <div>{name}</div>
-          <input {...inputProps} {...restProps} />
-          {inputProps.error && <span>{inputProps.error}</span>}
-        </div>
-      )}
-    </Form.Consumer>
+    <div>
+      <div>{name}</div>
+      <input {...inputProps} {...restProps} />
+      {inputProps.error && <span>{inputProps.error}</span>}
+    </div>
   );
 });
 
 /* basicForm.js */
 import { useEffect, useRef } from "react";
-import { useFormHook, Form } from "./hook.js";
+import { Form } from "@cartoonmangodev/react-form-handler";
+import { useFormHook } from "./hook.js";
 import { InputField } from "./customInputField.js";
-
 export const BasicForm = () => {
   const { formRef, formId } = useFormHook();
   return (
@@ -100,7 +95,12 @@ import {
   ON_BLUR,
   ON_CHANGE,
   ERROR,
+<<<<<<< HEAD
 } from "react-form-validation-handler/constants";
+=======
+  ON_CHANGE_TEXT,
+} from "@cartoonmangodev/react-form/constants";
+>>>>>>> 0542c07c86f6903dca0c4a965b562b4112d68dab
 const { useForm, useFormRef } = FormProvider({
   ON_CHANGE_KEY: ON_CHANGE /* use ON_CHANGE_TEXT if you are using react-native  */,
   ON_BLUR_KEY: ON_BLUR,
@@ -152,7 +152,12 @@ import { Form } from "react-form-validation-handler";
 export const InputField = React.memo((props) => {
   const { id, name, ...restProps } = props;
   return (
-    <Form.Consumer id={id}>
+    <Form.Consumer
+      id={id}
+      inputConfig={{
+        isRequired: false,
+      }}
+    >
       {({ inputProps }) => (
         <div>
           <div>{name}</div>
@@ -291,7 +296,12 @@ const FORM_CONFIG = {
   person: newSchema({
     name: { isRequired: true },
     age: { min: 18, max: 16 },
-    company: { isRequired: true },
+    company: {
+      isRequired: true,
+      inputProps: {
+        disabled: true,
+      },
+    },
   }),
 };
 ```
@@ -462,7 +472,7 @@ const form = ({ formId }) => {
 |  value   |      any      |   any    |                     The current value of the input                      |
 |  error   |    string     |  string  |               An error message associated with the input                |
 
-## # Form config props - `<Object>`
+## # Form config / InputConfig props - `<Object>`
 
 |       Props        | Default Value |   type   |                          value                           |                                        Description                                         |
 | :----------------: | :-----------: | :------: | :------------------------------------------------------: | :----------------------------------------------------------------------------------------: |
@@ -476,7 +486,7 @@ const form = ({ formId }) => {
 |  allowValidNumber  |     false     |  number  |                     `true or false`                      |              A number indicating whether the entered number is valid or not.               |
 |        type        |     null      |  number  |                    `"email","number"`                    |            A string indicating the type of validation (`"email"`, `"number"`).             |
 |        trim        |     null      | Boolean  |                     `true or false`                      |                      A boolean indicating whether spaces are allowed.                      |
-|      pattern       |     null      |  regex   |                          `/$d/`                          |                    A regular expression for custom pattern validation.                     |
+|      pattern       |     null      |  regex   |                         `/\d+/`                          |                    A regular expression for custom pattern validation.                     |
 |      message       |     null      |  object  |         `{min: 'mimimum 8 characters required'}`         |        An object providing custom error messages for different validation scenarios        |
 |     validator      |     null      | function | `(value) => ({error: value < 5 ? 'Error' : null,value})` |                          A function for custom validation logic.                           |
 |      callback      |     null      | function |       `({value}) => {console.log('do something')}`       |                            A function called after validation.                             |
@@ -587,7 +597,7 @@ const form = ({ formId }) => {
 
 **setFormValues will be used for prefill form values**
 
-> #### **Note:** By default only keys in the object will be modified. If you want to reset and set new values, set second params to true
+> #### **Note:** By default only keys in the given object will be modified. If you want to reset and set new values, set second params to true
 
 ```js
 /* hook.js */
@@ -683,7 +693,7 @@ const form = ({ formId }) => {
 
 ## # resetFormConfig method
 
-**resetFormConfig will be used to reset the formConfig ans set the newConfig**
+**resetFormConfig will be used to reset the formConfig and set the newConfig**
 
 > ### **Note:** This will remove the old config and set the new config
 
@@ -886,7 +896,7 @@ const form = ({ formId }) => {
 
 ## # setFormRefArray method
 
-**setFormRefArray method will be used to change the order of the form ans set the new form array**
+**setFormRefArray method will be used to change the order of the form and set the new form array**
 
 ```js
 /* hook.js */
@@ -930,6 +940,112 @@ export const useFormHook = () =>
   });
 ```
 
+## # Don't reset form on unmount
+
+> ### **Note:**
+>
+> ### - This will always maintain the form state even if you navigate from one page to another page
+>
+> ### - If page is refreshed it will reset the form value
+>
+> ### - It can be used for multiple step form
+
+```js
+/* step_1.js */
+import { useEffect, useRef } from "react";
+import { useFormHook, Form } from "./hook.js";
+import { InputField } from "./customInputField.js";
+
+const Form = () => {
+  const { formRef, formId } = useFormHook();
+  const submit = useCallback(() => {
+    if (formRef.validateForm().isValid) {
+      // navigate("step_2", {
+      //   formId,
+      // });
+    }
+  }, []);
+  return (
+    <Form.Provider formRef={formRef} dontResetOnUnmount>
+      <Form.Provider id="step_1">
+        <Form.Provider id="person">
+          <InputField id="name" />
+          <InputField id="age" />
+          <InputField id="company" />
+        </Form.Provider>
+      </Form.Provider>
+      <Button onClick={submit}>Submit</Button>
+    </Form.Provider>
+  );
+};
+```
+
+```js
+/* step_2.js */
+import { useEffect, useRef } from "react";
+import { useFormHook, Form } from "./hook.js";
+import { InputField } from "./customInputField.js";
+
+const Form = ({ formId }) => {
+  const { formRef } = useFormRef(formId);
+  const submit = useCallback(() => {
+    console.log(formRef.validateForm());
+  }, []);
+  return (
+    <Form.Provider formRef={formRef} dontResetOnUnmount>
+      <Form.Provider id="step_2">
+        <Form.Provider id="person">
+          <InputField id="name" />
+          <InputField id="age" />
+          <InputField id="company" />
+        </Form.Provider>
+      </Form.Provider>
+      <Button onClick={submit}>Submit</Button>
+    </Form.Provider>
+  );
+};
+```
+
+## # Form Controller
+
+**This will helps to controll multiple input props**
+
+```js
+/* step_1.js */
+import { useEffect, useRef } from "react";
+import { useFormHook, Form } from "./hook.js";
+import { InputField } from "./customInputField.js";
+
+const Form = () => {
+  const { formRef, formId } = useFormHook();
+  const submit = useCallback(() => {
+    if (formRef.validateForm().isValid) {
+      // navigate("step_2", {
+      //   formId,
+      // });
+    }
+  }, []);
+  return (
+    <Form.Provider formRef={formRef} dontResetOnUnmount>
+      <Form.Provider id="step_1">
+        <Form.Provider id="person">
+          {() => (
+            <>
+              <InputField id="name" />
+              <Form.Controller disabled={!values.name}>
+                <InputField id="age" />
+                <InputField id="company" />
+              </Form.Controller>
+            </>
+          )}
+        </Form.Provider>
+      </Form.Provider>
+      <Button onClick={submit}>Submit</Button>
+    </Form.Provider>
+  );
+};
+```
+
 ## # Whether this package will support for react-native
 
 #### **Yes**, this package will support for both [react](https://reactjs.org/) and [react-native](https://reactnative.dev/)
@@ -947,7 +1063,3 @@ Please make sure to update tests as appropriate.
 ## License
 
 Copyright (c) 2023-present Chrissie Fernando
-
-```
-
-```
