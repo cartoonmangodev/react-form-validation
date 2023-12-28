@@ -1,6 +1,6 @@
 {
   "name": "react-form-validation-handler",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "react-form-validation-handler is a React library for simplifying form validation. It provides a set of utilities and hooks to handle client-side form validation with ease.",
   "main": "./lib/index.js",
   "unpkg": "./lib/index.js",
