@@ -22,6 +22,8 @@ export default (props = {}) => {
   const { formRef, renderForm, _rootRef: rootRef } =
     useContext(FormRefContext) || {};
 
+  if (!formRef) return { inputProps: {} };
+
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
 
   if (
