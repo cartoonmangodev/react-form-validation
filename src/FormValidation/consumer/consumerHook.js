@@ -10,6 +10,7 @@ import { IS_SCHEMA, PRIMITIVE_VALUE } from "../constants";
 const ID_KEY = "id";
 
 export default (props = {}) => {
+  if (!props[idKey || ID_KEY]) return { inputProps: {} };
   const ref = useRef({});
   const { inputProps = {}, idKey, onSubmit, setInputProps, extraProps } =
     useContext(FormContext) || {};
@@ -21,8 +22,6 @@ export default (props = {}) => {
 
   const { formRef, renderForm, _rootRef: rootRef } =
     useContext(FormRefContext) || {};
-
-  if(!formRef) return {inputProps: {}}
 
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
 
