@@ -25,12 +25,11 @@ export default (props = {}) => {
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
 
   const isIdExists = !!(
-    inputProps[props[idKey || ID_KEY]] &&
-    typeof inputProps[props[idKey || ID_KEY]] === "string"
+    props[idKey || ID_KEY] && typeof [props[idKey || ID_KEY]] === "string"
   );
 
-  if (!isIdExists || !inputProps[props[idKey || ID_KEY]] || !formRef)
-    return { inputProps: {} };
+  if (!isIdExists) return { inputProps: {} };
+
   if (
     _inputFieldProps._fieldConfig &&
     !isEqual(ref.current.inputConfig, inputConfig)
