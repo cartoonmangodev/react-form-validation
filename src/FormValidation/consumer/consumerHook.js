@@ -25,7 +25,7 @@ export default (props = {}) => {
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
 
   const isIdExists = !!(
-    props[idKey || ID_KEY] && typeof [props[idKey || ID_KEY]] === "string"
+    props[idKey || ID_KEY] && typeof props[idKey || ID_KEY] === "string"
   );
 
   if (!isIdExists) return { inputProps: {} };
