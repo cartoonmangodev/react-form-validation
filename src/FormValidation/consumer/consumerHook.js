@@ -23,10 +23,14 @@ export default (props = {}) => {
     useContext(FormRefContext) || {};
 
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
+
   const isIdExists = !!(
     inputProps[props[idKey || ID_KEY]] &&
     typeof inputProps[props[idKey || ID_KEY]] === "string"
   );
+
+  if (!isIdExists || !inputProps[props[idKey || ID_KEY]] || !formRef)
+    return { inputProps: {} };
   if (
     _inputFieldProps._fieldConfig &&
     !isEqual(ref.current.inputConfig, inputConfig)
