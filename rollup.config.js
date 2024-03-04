@@ -27,7 +27,7 @@ export default [
   // CommonJS
   {
     input: "src/index.js",
-    output: { file: "lib/index.js", format: "cjs", indent: false },
+    output: { file: "lib/index.js", format: "umd", indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
@@ -49,7 +49,7 @@ export default [
   },
   {
     input: "src/utils.js",
-    output: { file: "utils/index.js", format: "cjs", indent: false },
+    output: { file: "utils/index.js", format: "umd", indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
@@ -71,7 +71,7 @@ export default [
   },
   {
     input: "src/constants.js",
-    output: { file: "constants/index.js", format: "cjs", indent: false },
+    output: { file: "constants/index.js", format: "umd", indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),

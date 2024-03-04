@@ -1,1 +1,85 @@
-"use strict";function _interopDefault(e){return e&&"object"==typeof e&&"default"in e?e.default:e}Object.defineProperty(exports,"__esModule",{value:!0});var invariant=_interopDefault(require("invariant"));const cloneObject=function(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return Object.assign({},e,t)},newObject=function(){let e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};for(var t=arguments.length,n=new Array(t>1?t-1:0),o=1;o<t;o++)n[o-1]=arguments[o];return 0===n.length?cloneObject(e):n.reduce((t,n)=>cloneObject(t,"function"==typeof n&&n(e,t)||n),cloneObject(e))},TYPE_NULL="null",TYPE_UNDEFINED="undefined",TYPE_STRING="string",TYPE_ARRAY="array",TYPE_BOOLEAN="boolean",TYPE_OBJECT="object",TYPE_FUNCTION="function",TYPE_ERROR="error",TYPE_SYMBOL="symbol",TYPE_GENERATOR_FUNCTION="generatorFunction",type={"[object Null]":"null","[object Undefined]":"undefined","[object String]":"string","[object Array]":"array","[object Boolean]":"boolean","[object Object]":"object","[object Function]":"function","[object Error]":"error","[object Symbol]":"symbol","[object GeneratorFunction]":"generatorFunction"},typeOf=e=>void 0===e?typeof e:type[Object.prototype.toString.call(e)]||typeof e,_uniqueId={},generateTimeStamp=()=>(new Date).getTime(),generateUniqueId=function e(){const t=Math.floor(Math.random()*generateTimeStamp());return _uniqueId[t]?e():(_uniqueId[t]=t,t)},deleteUniqueId=e=>delete _uniqueId[e],IS_SCHEMA=`_schema_id_@_${generateTimeStamp()}_@_`,IS_MULTIPLE=`${IS_SCHEMA}_multiple`,SCHEMA_CONFIG=`${IS_SCHEMA}_config`,checkKey=(e,t,n)=>{const o=Array.isArray(n)?n:[n];invariant(o.includes(typeOf(e)),t)},checkIsValidConfig=e=>e[IS_SCHEMA]||e[IS_MULTIPLE],newSchema=e=>(checkIsValidConfig(e||{})&&checkKey(!1,"(newSchema) Invalid form schema","object"),{[IS_SCHEMA]:!0,[SCHEMA_CONFIG]:e}),newFormArray=e=>(e[IS_MULTIPLE]&&checkKey(!1,"(newMultiple) Invalid form schema","object"),{[IS_MULTIPLE]:!0,[SCHEMA_CONFIG]:e[IS_SCHEMA]?e._config:e});exports.deleteUniqueId=deleteUniqueId,exports.generateTimeStamp=generateTimeStamp,exports.generateUniqueId=generateUniqueId,exports.newFormArray=newFormArray,exports.newObject=newObject,exports.newSchema=newSchema,exports.typeOf=typeOf;
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var invariant = _interopDefault(require('invariant'));
+
+const cloneObject = function (oldState) {
+  let newState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  return Object.assign({}, oldState, newState);
+};
+const newObject = function () {
+  let oldState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    rest[_key - 1] = arguments[_key];
+  }
+  return rest.length === 0 ? cloneObject(oldState) : rest.reduce((acc, curr) => cloneObject(acc, typeof curr === 'function' && curr(oldState, acc) || curr), cloneObject(oldState));
+};
+
+const TYPE_NULL = "null";
+const TYPE_UNDEFINED = "undefined";
+const TYPE_STRING = "string";
+const TYPE_ARRAY = "array";
+const TYPE_BOOLEAN = "boolean";
+const TYPE_OBJECT = "object";
+const TYPE_FUNCTION = "function";
+const TYPE_ERROR = "error";
+const TYPE_SYMBOL = "symbol";
+const TYPE_GENERATOR_FUNCTION = "generatorFunction";
+const type = {
+  "[object Null]": TYPE_NULL,
+  "[object Undefined]": TYPE_UNDEFINED,
+  "[object String]": TYPE_STRING,
+  "[object Array]": TYPE_ARRAY,
+  "[object Boolean]": TYPE_BOOLEAN,
+  "[object Object]": TYPE_OBJECT,
+  "[object Function]": TYPE_FUNCTION,
+  "[object Error]": TYPE_ERROR,
+  "[object Symbol]": TYPE_SYMBOL,
+  "[object GeneratorFunction]": TYPE_GENERATOR_FUNCTION
+};
+const typeOf = _obj => typeof _obj === "undefined" ? typeof _obj : type[Object.prototype.toString.call(_obj)] || typeof _obj;
+
+const _uniqueId = {};
+const generateTimeStamp = () => new Date().getTime();
+const generateUniqueId = function generateUniqueId() {
+  const __uniqueId = Math.floor(Math.random() * generateTimeStamp());
+  if (_uniqueId[__uniqueId]) return generateUniqueId();
+  _uniqueId[__uniqueId] = __uniqueId;
+  return __uniqueId;
+};
+const deleteUniqueId = id => delete _uniqueId[id];
+
+const IS_SCHEMA = `_schema_id_@_${generateTimeStamp()}_@_`;
+const IS_MULTIPLE = `${IS_SCHEMA}_multiple`;
+const SCHEMA_CONFIG = `${IS_SCHEMA}_config`;
+
+const checkKey = (key, message, dataType) => {
+  const convertArray = Array.isArray(dataType) ? dataType : [dataType];
+  invariant(convertArray.includes(typeOf(key)), message);
+};
+const checkIsValidConfig = config => config[IS_SCHEMA] || config[IS_MULTIPLE];
+const newSchema = config => {
+  if (checkIsValidConfig(config || {})) checkKey(false, "(newSchema) Invalid form schema", "object");
+  return {
+    [IS_SCHEMA]: true,
+    [SCHEMA_CONFIG]: config
+  };
+};
+const newFormArray = config => {
+  if (config[IS_MULTIPLE]) checkKey(false, "(newMultiple) Invalid form schema", "object");
+  return {
+    [IS_MULTIPLE]: true,
+    [SCHEMA_CONFIG]: config[IS_SCHEMA] ? config._config : config
+  };
+};
+
+exports.deleteUniqueId = deleteUniqueId;
+exports.generateTimeStamp = generateTimeStamp;
+exports.generateUniqueId = generateUniqueId;
+exports.newFormArray = newFormArray;
+exports.newObject = newObject;
+exports.newSchema = newSchema;
+exports.typeOf = typeOf;
