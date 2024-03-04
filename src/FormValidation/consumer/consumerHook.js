@@ -26,6 +26,12 @@ export default (props = {}) => {
 
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
 
+  const isIdExists = !!(
+    props[idKey || ID_KEY] && typeof [props[idKey || ID_KEY]] === "string"
+  );
+
+  if (!isIdExists) return { inputProps: {} };
+
   if (
     _inputFieldProps._fieldConfig &&
     !isEqual(ref.current.inputConfig, inputConfig)
@@ -34,7 +40,8 @@ export default (props = {}) => {
       Object.keys(ref.current.inputConfig).forEach(([key, val]) => {
         delete _inputFieldProps._fieldConfig[key];
       });
-    _inputFieldProps._fieldConfig._initiated = true;
+    _inputFieldProps._fieldConfig._initiated = isIdExists;
+
     if (typeOf(inputConfig) === TYPE_OBJECT)
       Object.entries(inputConfig).forEach(([key, val]) => {
         if (val !== undefined) _inputFieldProps._fieldConfig[key] = val;
@@ -45,7 +52,7 @@ export default (props = {}) => {
         [props[idKey || ID_KEY]]: newObject(
           _inputFieldProps._fieldConfig || {},
           {
-            _initiated: true,
+            _initiated: isIdExists,
             render: !!(inputConfig.render !== undefined
               ? inputConfig.render
               : render !== undefined
@@ -92,7 +99,7 @@ export default (props = {}) => {
     }
     formRef.modifyFormConfig({
       [props[idKey || ID_KEY]]: newObject(inputConfig || {}, {
-        _initiated: true,
+        _initiated: isIdExists,
         render: !!(inputConfig.render !== undefined
           ? inputConfig.render
           : renderForm || render),
