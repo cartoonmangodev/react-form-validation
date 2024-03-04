@@ -150,9 +150,8 @@ const formValidationHandler = ({
       ERROR_KEY,
     };
 
-    FormRef.prototype._initialFormConfig = initialConfig.FORM_CONFIG;
-    FormRef.prototype._initialConfig = initialConfig;
-
+    FormRef.prototype._initialFormConfig = _deepCopy(initialConfig.FORM_CONFIG);
+    FormRef.prototype._initialConfig = _deepCopy(initialConfig);
     const formId = generateUniqueId();
 
     _formRefs[formId] = formRef.current;
@@ -403,6 +402,7 @@ const formValidationHandler = ({
       dontRender
     ) => {
       const config = _config || formRef.current.formConfig[key] || {};
+      console.log(config, key);
       let { value, error: validatorError } = config.validator
         ? config.validator(
             __value,
@@ -844,8 +844,8 @@ const formValidationHandler = ({
         },
       };
       _commonInputProps._defaultConfig = initialConfig;
-      delete _commonInputProps._config.inputProps;
-      delete _commonInputProps._config._commonInputProps;
+      // delete _commonInputProps._config.inputProps;
+      // delete _commonInputProps._config._commonInputProps;
 
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = {
