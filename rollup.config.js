@@ -36,7 +36,7 @@ export default [
       nodeResolve({
         extensions,
       }),
-      terser(),
+      // terser(),
       // typescript({ useTsconfigDeclarationDir: true }),
       babel({
         extensions,
@@ -58,7 +58,7 @@ export default [
       nodeResolve({
         extensions,
       }),
-      terser(),
+      // terser(),
       // typescript({ useTsconfigDeclarationDir: true }),
       babel({
         extensions,
@@ -80,7 +80,7 @@ export default [
       nodeResolve({
         extensions,
       }),
-      terser(),
+      // terser(),
       // typescript({ useTsconfigDeclarationDir: true }),
       babel({
         extensions,
