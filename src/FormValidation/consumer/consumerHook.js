@@ -11,16 +11,29 @@ const ID_KEY = "id";
 
 export default (props = {}) => {
   const ref = useRef({});
-  const { inputProps = {}, idKey, onSubmit, setInputProps, extraProps } =
-    useContext(FormContext) || {};
+  const {
+    inputProps = {},
+    idKey,
+    onSubmit,
+    setInputProps,
+    extraProps,
+  } = useContext(FormContext) || {};
 
-  const { render, inputConfig: _inputConfig, ...commonInputProps } =
-    useContext(FormControllerContext) || {};
+  const {
+    render,
+    inputConfig: _inputConfig,
+    ...commonInputProps
+  } = useContext(FormControllerContext) || {};
 
   const inputConfig = { ...props.inputConfig, ..._inputConfig };
 
-  const { formRef, renderForm, _rootRef: rootRef } =
-    useContext(FormRefContext) || {};
+  const {
+    formRef,
+    renderForm,
+    _rootRef: rootRef,
+  } = useContext(FormRefContext) || {};
+
+  if (!formRef) return { inputProps: {} };
 
   let _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
 
@@ -39,6 +52,7 @@ export default (props = {}) => {
         delete _inputFieldProps._fieldConfig[key];
       });
     _inputFieldProps._fieldConfig._initiated = isIdExists;
+
     if (typeOf(inputConfig) === TYPE_OBJECT)
       Object.entries(inputConfig).forEach(([key, val]) => {
         if (val !== undefined) _inputFieldProps._fieldConfig[key] = val;
@@ -139,7 +153,6 @@ export default (props = {}) => {
 
   const _inputProps =
     formRef.getInputProps(extraProps)[props[idKey || ID_KEY]] || {};
-
   return {
     inputProps: { ...(_inputProps.inputProps || {}), ...commonInputProps },
     _inputFieldConfig: _inputProps._config,

@@ -95,7 +95,7 @@ import {
   ON_CHANGE,
   ERROR,
   ON_CHANGE_TEXT,
-} from "@cartoonmangodev/react-form/constants";
+} from "@cartoonmangodev/react-form-handler/constants";
 const { useForm, useFormRef } = FormProvider({
   ON_CHANGE_KEY: ON_CHANGE /* use ON_CHANGE_TEXT if you are using react-native  */,
   ON_BLUR_KEY: ON_BLUR,

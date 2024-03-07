@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/no-anonymous-default-export */
 import React, { memo } from "react";
@@ -14,8 +15,17 @@ const Consumer = memo(
       (next._inputFieldConfig && next._inputFieldConfig._config.lastUpdated)
 );
 
-export default ({ children, ...props }) => (
-  <Consumer {...useConsumerHook(props)}>{children}</Consumer>
-);
+const ConsumerWithoutId = ({ children, ...props }) => {
+  return typeof children === "function" ? children(props) : children;
+};
+
+export default ({ children, ...props }) =>
+  props.id ? (
+    <Consumer {...useConsumerHook(props)}>{children}</Consumer>
+  ) : (
+    <ConsumerWithoutId {...useConsumerHook(props)}>
+      {children}
+    </ConsumerWithoutId>
+  );
 
 export { useFormConsumer } from "./useConsumer";

@@ -119,7 +119,8 @@ const formValidationHandler = ({
 
     if (_isSchema_or_isMultiple_config_is_root) {
       /* formRef */
-      FormRef.prototype._isSchema_or_isMultiple_config_is_root = _isSchema_or_isMultiple_config_is_root;
+      FormRef.prototype._isSchema_or_isMultiple_config_is_root =
+        _isSchema_or_isMultiple_config_is_root;
     }
 
     FormRef.prototype[IS_MULTIPLE] = {
@@ -150,9 +151,8 @@ const formValidationHandler = ({
       ERROR_KEY,
     };
 
-    FormRef.prototype._initialFormConfig = initialConfig.FORM_CONFIG;
-    FormRef.prototype._initialConfig = initialConfig;
-
+    FormRef.prototype._initialFormConfig = _deepCopy(initialConfig.FORM_CONFIG);
+    FormRef.prototype._initialConfig = _deepCopy(initialConfig);
     const formId = generateUniqueId();
 
     _formRefs[formId] = formRef.current;
@@ -624,8 +624,7 @@ const formValidationHandler = ({
         totalErrorCount: isError.length,
         errorCount: isError.length,
         isError: isError.length > 0,
-        isValid: !isError.length,
-        isValidatePassed: !isError.length,
+        isValidatePassed: isError.length === 0,
       };
     };
 
@@ -646,8 +645,7 @@ const formValidationHandler = ({
           return {
             errorCount: acc.errorCount + obj2.errorCount,
             isError: acc.isError || obj2.isError,
-            isValid: acc.isValid && obj2.isValid,
-            isValidatePassed: acc.isValidatePassed && obj2.isValidatePassed,
+            isValidatePassed: acc.isValidatePassed || obj2.isValidatePassed,
             totalErrorCount: acc.totalErrorCount + obj2.totalErrorCount,
             errors: newObject(acc.errors, {
               [key]: obj2.errors,
@@ -692,8 +690,7 @@ const formValidationHandler = ({
         totalErrorCount: isError.length,
         errorCount: isError.length,
         isError: isError.length > 0,
-        isValid: !isError.length,
-        isValidatePassed: !isError.length,
+        isValidatePassed: isError.length === 0,
       };
     };
 
@@ -847,8 +844,8 @@ const formValidationHandler = ({
         },
       };
       _commonInputProps._defaultConfig = initialConfig;
-      delete _commonInputProps._config.inputProps;
-      delete _commonInputProps._config._commonInputProps;
+      // delete _commonInputProps._config.inputProps;
+      // delete _commonInputProps._config._commonInputProps;
 
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = {
@@ -915,9 +912,8 @@ const formValidationHandler = ({
                 : {
                     [key]: val[IS_MULTIPLE]
                       ? (() => {
-                          const _data = formRef.current._schema[key].formRef[
-                            method
-                          ]();
+                          const _data =
+                            formRef.current._schema[key].formRef[method]();
                           return Array.isArray(_data) ? _data : [];
                         })()
                       : formRef.current._schema[key].formRef[method](),
@@ -1319,9 +1315,11 @@ const formValidationHandler = ({
     formRef.current.clearForm = resetForm(true);
 
     if (!formRef.current._isMultipleForm) {
-      FormRef.prototype.setValidate = setValidate;
-      FormRef.prototype.setRequired = setRequired;
-      FormRef.prototype.setOptional = setOptional;
+      formRef.current.setValidate = setValidate;
+      formRef.current.setOptional = setOptional;
+      formRef.current.setRequired = setRequired;
+      formRef.current.setOptional = setOptional;
+      formRef.current.setRequired = setRequired;
       formRef.current.resetValues = resetValues;
       formRef.current.clearValues = clearValues;
       formRef.current.deleteFormConfig = onDeleteFormConfig;
@@ -1406,18 +1404,28 @@ const formValidationHandler = ({
 
   const useFormValidationHook = ({ renderForm, ...props }) => {
     const setRenderForm = useState()[1];
-    const [{ formRef, formId }] = useState(() =>
+    const initiateFormValidationHandler = (initialState, _initialErrors) =>
       _formValidationHandler({
         ...props,
+        initialState,
+        _initialErrors,
         renderFormCallback: setRenderForm,
         getFormData: renderForm ? setRenderForm : undefined,
-      })
+      });
+    const [{ formRef, formId }, setState] = useState(() =>
+      initiateFormValidationHandler(props.initialState, props.initialErrors)
     );
 
     formRef._ref(IS_FORMREF)._setRenderForm = setRenderForm;
     formRef._ref(IS_FORMREF)._isRenderForm = renderForm;
 
     useEffect(() => formRef._onUnMountForm, [formRef]);
+
+    formRef.setInitialState = (_initialState, _initialErrors) => {
+      setState(() =>
+        initiateFormValidationHandler(_initialState, _initialErrors)
+      );
+    };
 
     return { formRef, formId };
   };

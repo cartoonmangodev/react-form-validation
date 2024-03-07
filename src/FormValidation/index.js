@@ -13,5 +13,6 @@ export const Form = {
   Provider: FormProvider,
   Controller: FormController,
   Multiple: MultipleFormProvider,
+  Array: MultipleFormProvider,
 };
 export { useFormConsumer };
