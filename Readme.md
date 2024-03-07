@@ -610,6 +610,27 @@ const form = ({ formId }) => {
 };
 ```
 
+## # setInitialState method
+
+**setInitialState will be used for set form values**
+
+> #### **Note:** This will reset all the keys and values
+
+```js
+/* hook.js */
+import { useFormRef } from "./hook.js";
+
+const form = ({ formId }) => {
+  const { formRef, formId } = useFormRef(formId);
+  formRef.setInitialState(
+    {
+      name: "Person",
+    },
+    IS_RESET_FORM
+  );
+};
+```
+
 ## # validateForm method
 
 **validateForm will be used to validate the form**

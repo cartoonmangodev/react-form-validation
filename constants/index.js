@@ -4,9 +4,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 require('invariant');
 
-const generateTimeStamp = () => new Date().getTime();
-
-const IS_SCHEMA = `_schema_id_@_${generateTimeStamp()}_@_`;
+// export const IS_SCHEMA = `_schema_id_@_${generateTimeStamp()}_@_`;
+const IS_SCHEMA = `_schema_id_@_@_`;
 const IS_FORMREF = `${IS_SCHEMA}_ref`;
 const IS_MULTIPLE = `${IS_SCHEMA}_multiple`;
 const PRIMITIVE_VALUE = `${IS_SCHEMA}_primitive_@_`;
