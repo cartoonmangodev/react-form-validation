@@ -622,12 +622,9 @@ import { useFormRef } from "./hook.js";
 
 const form = ({ formId }) => {
   const { formRef, formId } = useFormRef(formId);
-  formRef.setInitialState(
-    {
-      name: "Person",
-    },
-    IS_RESET_FORM
-  );
+  formRef.setInitialState({
+    name: "Person",
+  });
 };
 ```
 
