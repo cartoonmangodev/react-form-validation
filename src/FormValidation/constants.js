@@ -1,6 +1,7 @@
 import { generateTimeStamp } from "../utils";
 
-export const IS_SCHEMA = `_schema_id_@_${generateTimeStamp()}_@_`;
+// export const IS_SCHEMA = `_schema_id_@_${generateTimeStamp()}_@_`;
+export const IS_SCHEMA = `_schema_id_@_@_`;
 export const IS_FORMREF = `${IS_SCHEMA}_ref`;
 export const IS_MULTIPLE = `${IS_SCHEMA}_multiple`;
 export const PRIMITIVE_VALUE = `${IS_SCHEMA}_primitive_@_`;
