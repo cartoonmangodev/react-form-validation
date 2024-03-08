@@ -15,17 +15,17 @@ const Consumer = memo(
       (next._inputFieldConfig && next._inputFieldConfig._config.lastUpdated)
 );
 
-const ConsumerWithoutId = ({ children, ...props }) => {
+const ConsumerWithoutMemo = ({ children, ...props }) => {
   return typeof children === "function" ? children(props) : children;
 };
 
 export default ({ children, render, ...props }) =>
-  props.id && !props.render ? (
+  props.id && !render ? (
     <Consumer {...useConsumerHook(props)}>{children}</Consumer>
   ) : (
-    <ConsumerWithoutId {...useConsumerHook(props)}>
+    <ConsumerWithoutMemo {...useConsumerHook(props)}>
       {children}
-    </ConsumerWithoutId>
+    </ConsumerWithoutMemo>
   );
 
 export { useFormConsumer } from "./useConsumer";
