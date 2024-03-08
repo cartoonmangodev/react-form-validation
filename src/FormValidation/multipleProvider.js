@@ -305,8 +305,9 @@ export default forwardRef(
         valueRef.current.formRefArray[targetIndex] &&
         valueRef.current.formRefArray[targetIndex].formRef
       ) {
-        const value =
-          valueRef.current.formRefArray[targetIndex].formRef.getValues();
+        const value = valueRef.current.formRefArray[
+          targetIndex
+        ].formRef.getValues();
         onAddMultipleForm(Array(count).fill(value), sourceFormId, count);
       }
     };
@@ -464,10 +465,8 @@ export default forwardRef(
 
     formRef.formArrayProps = multiple;
 
-    rootFormRef._formRef.__formRef__.values =
-      rootFormRef._formRef.__formRef__.getValues();
-    rootFormRef._formRef.__formRef__.errors =
-      rootFormRef._formRef.__formRef__.getErrors();
+    rootFormRef._formRef.__formRef__.values = rootFormRef._formRef.__formRef__.getValues();
+    rootFormRef._formRef.__formRef__.errors = rootFormRef._formRef.__formRef__.getErrors();
 
     useEffect(
       () => () => {
@@ -495,12 +494,14 @@ export default forwardRef(
       return () => {
         if (rootRef.current.dontResetOnUnmount) {
           if (!formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState)
-            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState =
-              formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues;
+            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState = formRef._ref(
+              IS_FORMREF
+            )[IS_MULTIPLE]._initialValues;
           formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = getValues();
         } else {
-          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues =
-            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState;
+          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = formRef._ref(
+            IS_FORMREF
+          )[IS_MULTIPLE]._initialState;
         }
         if (idRef.current.id)
           if (!rootRef.current.dontResetOnUnmount) {
@@ -530,7 +531,7 @@ export default forwardRef(
     const _formRefProps = (_index, _ref) => {
       const _props = {
         index: _index,
-        totalArrayCount: formRefArray.length,
+        length: formRefArray.length,
         append: (value = [], count) =>
           onAddForm(value, formIds[_index], count, true),
         reset: onResetForm.bind(null, formIds[_index]),
