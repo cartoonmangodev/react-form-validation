@@ -1,3 +1,4 @@
+import { TYPE_OBJECT } from "../constants";
 import { newObject, typeOf } from "../utils";
 import { IS_MULTIPLE, IS_SCHEMA, SCHEMA_CONFIG } from "./constants";
 import invariant from "invariant";
@@ -58,7 +59,7 @@ export const _setInitialValues = ({
       if (formConfig[IS_MULTIPLE]) return [];
       const __values = Object.entries(formConfig || {}).reduce(
         (acc, [key, val = {}]) => {
-          if (key in initialValues)
+          if (typeOf(key) === TYPE_OBJECT && key in initialValues)
             return newObject(acc, {
               [key]:
                 val && (val[IS_SCHEMA] || val[IS_MULTIPLE] || val._formId_)

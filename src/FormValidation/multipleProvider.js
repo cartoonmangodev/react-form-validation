@@ -537,6 +537,7 @@ export default forwardRef(
         reset: onResetForm.bind(null, formIds[_index]),
         clear: onClearForm.bind(null, formIds[_index]),
         delete: onDeleteForm.bind(null, formIds[_index]),
+        remove: onDeleteForm.bind(null, formIds[_index]),
         clone: onCloneForm.bind(null, formIds[_index]),
         swap: onSwapForm.bind(null, formIds[_index]),
         validate: _ref.validateForm,

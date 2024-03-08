@@ -19,8 +19,8 @@ const ConsumerWithoutId = ({ children, ...props }) => {
   return typeof children === "function" ? children(props) : children;
 };
 
-export default ({ children, ...props }) =>
-  props.id ? (
+export default ({ children, render, ...props }) =>
+  props.id && !props.render ? (
     <Consumer {...useConsumerHook(props)}>{children}</Consumer>
   ) : (
     <ConsumerWithoutId {...useConsumerHook(props)}>
