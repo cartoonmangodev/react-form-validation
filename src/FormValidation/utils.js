@@ -102,7 +102,7 @@ export const _setInitialErrors = (props) => {
   });
 };
 
-export const _deepCopy = require("lodash.clonedeep");
+export const _deepCopy = newObject;
 
 // export function _deepCopy(src, /* INTERNAL */ _visited, _copiesVisited) {
 //   if (src === null || typeof src !== "object") {
