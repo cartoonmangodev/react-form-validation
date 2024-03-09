@@ -59,7 +59,7 @@ export const _setInitialValues = ({
       if (formConfig[IS_MULTIPLE]) return [];
       const __values = Object.entries(formConfig || {}).reduce(
         (acc, [key, val = {}]) => {
-          if (typeOf(key) === TYPE_OBJECT && key in initialValues)
+          if (key in initialValues)
             return newObject(acc, {
               [key]:
                 val && (val[IS_SCHEMA] || val[IS_MULTIPLE] || val._formId_)
