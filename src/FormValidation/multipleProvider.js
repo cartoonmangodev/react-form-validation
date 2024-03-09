@@ -554,6 +554,7 @@ export default forwardRef(
         ref.current.formArray = formRefArray;
         ref.current.form = _props;
         ref.current.formId = formRef._formId_;
+        ref.current.multiple = multiple;
       }
       return {
         ..._props,

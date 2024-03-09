@@ -231,7 +231,7 @@ const formValidationHandler = ({
         ? "default" in config
           ? config.default
           : ""
-        : typeOf(key) === TYPE_OBJECT && key in initialValues
+        : key in initialValues
         ? typeof initialValues[key] === "function"
           ? initialValues[key]()
           : initialValues[key]
@@ -734,11 +734,7 @@ const formValidationHandler = ({
       const _values = { ...values };
       const _errors = { ...errors };
       clearKeys.forEach((_key) => {
-        if (
-          isDeleteKey &&
-          typeOf(_key) === TYPE_OBJECT &&
-          !(_key in initialValues)
-        ) {
+        if (isDeleteKey && !(_key in initialValues)) {
           delete _values[_key];
           delete _errors[_key];
         } else {
