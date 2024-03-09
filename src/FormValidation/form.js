@@ -150,8 +150,8 @@ const formValidationHandler = ({
       ERROR_KEY,
     };
 
-    FormRef.prototype._initialFormConfig = _deepCopy(initialConfig.FORM_CONFIG);
-    FormRef.prototype._initialConfig = _deepCopy(initialConfig);
+    FormRef.prototype._initialFormConfig = initialConfig.FORM_CONFIG;
+    FormRef.prototype._initialConfig = initialConfig;
     const formId = generateUniqueId();
 
     _formRefs[formId] = formRef.current;
