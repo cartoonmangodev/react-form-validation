@@ -11,27 +11,16 @@ const ID_KEY = "id";
 
 export default (props = {}) => {
   const ref = useRef({});
-  const {
-    inputProps = {},
-    idKey,
-    onSubmit,
-    setInputProps,
-    extraProps,
-  } = useContext(FormContext) || {};
+  const { inputProps = {}, idKey, onSubmit, setInputProps, extraProps } =
+    useContext(FormContext) || {};
 
-  const {
-    render,
-    inputConfig: _inputConfig,
-    ...commonInputProps
-  } = useContext(FormControllerContext) || {};
+  const { render, inputConfig: _inputConfig, ...commonInputProps } =
+    useContext(FormControllerContext) || {};
 
   const inputConfig = { ...props.inputConfig, ..._inputConfig };
 
-  const {
-    formRef,
-    renderForm,
-    _rootRef: rootRef,
-  } = useContext(FormRefContext) || {};
+  const { formRef, renderForm, _rootRef: rootRef } =
+    useContext(FormRefContext) || {};
 
   if (!formRef) return { inputProps: {} };
 
@@ -135,10 +124,11 @@ export default (props = {}) => {
         }
         if (ref.current.id)
           inputProps[IS_SCHEMA].deleteFormConfig([ref.current.id]);
-        inputProps[IS_SCHEMA].resetFormInput(
-          [props[idKey || ID_KEY]],
-          !!ref.current.id
-        );
+        if (inputProps[IS_SCHEMA])
+          inputProps[IS_SCHEMA].resetFormInput(
+            [props[idKey || ID_KEY]],
+            !!ref.current.id
+          );
         inputProps[IS_SCHEMA].onFormChangeCallback();
       }
     };

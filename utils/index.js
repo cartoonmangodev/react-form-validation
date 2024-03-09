@@ -57,8 +57,6 @@ const IS_SCHEMA = `_schema_id_@_@_`;
 const IS_MULTIPLE = `${IS_SCHEMA}_multiple`;
 const SCHEMA_CONFIG = `${IS_SCHEMA}_config`;
 
-const _deepCopy = require("lodash.clonedeep");
-
 // export function _deepCopy(src, /* INTERNAL */ _visited, _copiesVisited) {
 //   if (src === null || typeof src !== "object") {
 //     return src;
