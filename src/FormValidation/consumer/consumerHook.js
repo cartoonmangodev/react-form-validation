@@ -122,14 +122,15 @@ export default (props = {}) => {
                 _inputFieldProps._defaultConfig[key];
             });
         }
-        if (ref.current.id)
-          inputProps[IS_SCHEMA].deleteFormConfig([ref.current.id]);
-        if (inputProps[IS_SCHEMA])
+        if (inputProps[IS_SCHEMA]) {
+          if (ref.current.id)
+            inputProps[IS_SCHEMA].deleteFormConfig([ref.current.id]);
           inputProps[IS_SCHEMA].resetFormInput(
             [props[idKey || ID_KEY]],
             !!ref.current.id
           );
-        inputProps[IS_SCHEMA].onFormChangeCallback();
+          inputProps[IS_SCHEMA].onFormChangeCallback();
+        }
       }
     };
   }, [formRef._formId_]);
