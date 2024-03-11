@@ -69,9 +69,10 @@ const _getFormRef = (_formRef, id) => {
 };
 
 const checkFormRefIsValid = (formRef) => {
-  // if (!formRef || formRef.constructor.name !== "FormRef") {
-  if (!formRef) {
-    throw new Error("Invalid FormRef");
+  if (!formRef || formRef.constructor.name !== "FormRef") {
+    throw new Error(
+      "Invalid FormRef.Please use the formRef from the useFormHook"
+    );
   }
 };
 export default forwardRef(
@@ -88,12 +89,13 @@ export default forwardRef(
     ref
   ) => {
     if (
-      !_formRef &&
-      !id
-      // (!_formRef && !id) ||
-      // (_formRef && _formRef.constructor.name !== "FormRef")
+      (!_formRef && !id) ||
+      (_formRef && _formRef.constructor.name !== "FormRef")
     ) {
-      if (_formRef) throw new Error("Invalid FormRef");
+      if (_formRef)
+        throw new Error(
+          "Invalid FormRef.Please use the formRef from the useFormHook"
+        );
       else throw new Error("Required props 'formRef' or 'id' ");
     }
 
@@ -240,15 +242,12 @@ export default forwardRef(
           const ___val = _val.slice();
           const __value = ___val[currentIndex];
           const __value2 = ___val[targetIndex];
-          console.log(___val);
           if (
             typeof targetIndex === "number" &&
             typeof currentIndex === "number"
           ) {
             ___val.splice(currentIndex, 1, __value2);
-            console.log(___val);
             ___val.splice(targetIndex, 1, __value);
-            console.log(___val);
           }
           return ___val;
         });
@@ -305,9 +304,8 @@ export default forwardRef(
         valueRef.current.formRefArray[targetIndex] &&
         valueRef.current.formRefArray[targetIndex].formRef
       ) {
-        const value = valueRef.current.formRefArray[
-          targetIndex
-        ].formRef.getValues();
+        const value =
+          valueRef.current.formRefArray[targetIndex].formRef.getValues();
         onAddMultipleForm(Array(count).fill(value), sourceFormId, count);
       }
     };
@@ -465,8 +463,10 @@ export default forwardRef(
 
     formRef.formArrayProps = multiple;
 
-    rootFormRef._formRef.__formRef__.values = rootFormRef._formRef.__formRef__.getValues();
-    rootFormRef._formRef.__formRef__.errors = rootFormRef._formRef.__formRef__.getErrors();
+    rootFormRef._formRef.__formRef__.values =
+      rootFormRef._formRef.__formRef__.getValues();
+    rootFormRef._formRef.__formRef__.errors =
+      rootFormRef._formRef.__formRef__.getErrors();
 
     useEffect(
       () => () => {
@@ -494,14 +494,12 @@ export default forwardRef(
       return () => {
         if (rootRef.current.dontResetOnUnmount) {
           if (!formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState)
-            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState = formRef._ref(
-              IS_FORMREF
-            )[IS_MULTIPLE]._initialValues;
+            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState =
+              formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues;
           formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = getValues();
         } else {
-          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = formRef._ref(
-            IS_FORMREF
-          )[IS_MULTIPLE]._initialState;
+          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues =
+            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState;
         }
         if (idRef.current.id)
           if (!rootRef.current.dontResetOnUnmount) {

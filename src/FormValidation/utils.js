@@ -49,11 +49,12 @@ export const _setInitialValues = ({
   // if (Object.keys(_initialValues).length) {
   //   return _initialValues;
   // }
-  const _values = (isMultiple
-    ? Array.isArray(_initialValues)
-      ? _initialValues
+  const _values = (
+    isMultiple
+      ? Array.isArray(_initialValues)
+        ? _initialValues
+        : [_initialValues]
       : [_initialValues]
-    : [_initialValues]
   ).reduce(
     (acc, initialValues) => {
       if (formConfig[IS_MULTIPLE]) return [];
@@ -102,7 +103,7 @@ export const _setInitialErrors = (props) => {
   });
 };
 
-export const _deepCopy = newObject;
+export const _deepCopy = (e) => e;
 
 // export function _deepCopy(src, /* INTERNAL */ _visited, _copiesVisited) {
 //   if (src === null || typeof src !== "object") {

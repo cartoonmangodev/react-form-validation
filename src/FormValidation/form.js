@@ -119,7 +119,8 @@ const formValidationHandler = ({
 
     if (_isSchema_or_isMultiple_config_is_root) {
       /* formRef */
-      FormRef.prototype._isSchema_or_isMultiple_config_is_root = _isSchema_or_isMultiple_config_is_root;
+      FormRef.prototype._isSchema_or_isMultiple_config_is_root =
+        _isSchema_or_isMultiple_config_is_root;
     }
 
     FormRef.prototype[IS_MULTIPLE] = {
@@ -277,20 +278,22 @@ const formValidationHandler = ({
           ref.current.sampleFormObject = getSampleForm();
         }
       }
-      if (typeOf(onFormChangeCallback) === TYPE_FUNCTION && !dontRender)
-        setTimeout(() => {
-          if (__formRef.current.getValues) {
-            const _data = {
-              values: (_rootRef || __formRef).current.getValues(),
-              errors: (_rootRef || __formRef).current.getErrors(),
-              formConfig: (_rootRef || __formRef).current.getFormConfig(),
-            };
-            if (!isEqual(_data, __formRef.current.oldData)) {
-              __formRef.current.oldData = _data;
-              onFormChangeCallback(_data);
-            }
+      if (typeOf(onFormChangeCallback) === TYPE_FUNCTION && !dontRender) {
+        // setTimeout(() => {
+        const ___formRef = _rootRef || __formRef;
+        if (___formRef.current.getValues) {
+          const _data = {
+            values: ___formRef.current.getValues(),
+            errors: ___formRef.current.getErrors(),
+            formConfig: ___formRef.current.getFormConfig(),
+          };
+          if (!isEqual(_data, __formRef.current.oldData)) {
+            __formRef.current.oldData = _data;
+            onFormChangeCallback(_data);
           }
-        });
+        }
+        // });
+      }
     };
 
     const _resetSchema = (_config) => {
@@ -363,18 +366,17 @@ const formValidationHandler = ({
     const setValues = (_values, dontSetInputProps) => {
       formRef.current.values = _checkType(_values, formRef.current.values);
       values = _checkType(_values, values);
-      _onFormChangeCallback();
-      setTimeout(() => {
-        if (
-          typeOf(formRef.current._setInputProps) === TYPE_FUNCTION &&
-          !dontSetInputProps
-        )
-          formRef.current._setInputProps(
-            formRef.current.getInputProps(
-              formRef.current._extraProps || __formRef.current._extraProps
-            )
-          );
-      });
+      // setTimeout(() => {
+      //   if (
+      //     typeOf(formRef.current._setInputProps) === TYPE_FUNCTION &&
+      //     !dontSetInputProps
+      //   )
+      //     formRef.current._setInputProps(
+      //       formRef.current.getInputProps(
+      //         formRef.current._extraProps || __formRef.current._extraProps
+      //       )
+      //     );
+      // });
     };
 
     const setErrors = (_errors, dontSetInputProps) => {
@@ -860,7 +862,7 @@ const formValidationHandler = ({
         (acc, [key, val]) => {
           if (val[IS_SCHEMA] || val._formId_ || val[IS_MULTIPLE]) {
             formRef.current._schema[key].formRef.setInitialFormData(
-              _value[key],
+              _value[key] || (val[IS_MULTIPLE] ? [] : {}),
               isResetValue
             );
             return acc;
@@ -871,7 +873,7 @@ const formValidationHandler = ({
                 ? _value[key]
                 : isResetValue
                 ? formRef.current._resetValue(key)
-                : _value[key],
+                : formRef.current.getValues()[key],
           });
         },
         {}
@@ -911,9 +913,8 @@ const formValidationHandler = ({
                 : {
                     [key]: val[IS_MULTIPLE]
                       ? (() => {
-                          const _data = formRef.current._schema[key].formRef[
-                            method
-                          ]();
+                          const _data =
+                            formRef.current._schema[key].formRef[method]();
                           return Array.isArray(_data) ? _data : [];
                         })()
                       : formRef.current._schema[key].formRef[method](),
@@ -1417,7 +1418,7 @@ const formValidationHandler = ({
     );
 
     formRef._ref(IS_FORMREF)._setRenderForm = setRenderForm;
-    formRef._ref(IS_FORMREF)._isRenderForm = renderForm;
+    formRef._ref(IS_FORMREF)._isRenderForm = !!renderForm;
 
     useEffect(() => formRef._onUnMountForm, [formRef]);
 
@@ -1426,7 +1427,6 @@ const formValidationHandler = ({
         initiateFormValidationHandler(_initialState, _initialErrors)
       );
     };
-
     return { formRef, formId };
   };
 
