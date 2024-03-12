@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import {
   TYPE_OBJECT,
   TYPE_FUNCTION,
   TYPE_STRING,
   TYPE_ARRAY,
+  TYPE_NUMBER,
 } from "../constants";
 
 import isEqual from "fast-deep-equal";
@@ -41,6 +42,18 @@ import {
   typeOf,
 } from "../utils";
 import { FormRefContext } from "./context";
+
+const checkKey = (key) => {
+  if (
+    (!key && !(key === 0)) ||
+    ![TYPE_STRING, TYPE_NUMBER].includes(typeof key)
+  )
+    throw new Error(
+      !key
+        ? "formRef.init (key) is required"
+        : "formRef.init (key) value should be string | number"
+    );
+};
 
 const formValidationHandler = ({
   ON_CHANGE_KEY: _ON_CHANGE_KEY,
@@ -99,11 +112,13 @@ const formValidationHandler = ({
     let _isSchema_or_isMultiple_config_is_root;
     if (!_schemaKey) {
       if (FORM_CONFIG[IS_MULTIPLE]) {
+        /* moving form config to object if it is multiple array  */
         FORM_CONFIG = {
           [IS_MULTIPLE]: FORM_CONFIG,
         };
         _isSchema_or_isMultiple_config_is_root = IS_MULTIPLE;
       } else if (FORM_CONFIG[IS_SCHEMA]) {
+        /* moving form config to object if it is schema  */
         FORM_CONFIG = {
           [IS_SCHEMA]: FORM_CONFIG,
         };
@@ -366,17 +381,17 @@ const formValidationHandler = ({
     const setValues = (_values, dontSetInputProps) => {
       formRef.current.values = _checkType(_values, formRef.current.values);
       values = _checkType(_values, values);
-      // setTimeout(() => {
-      //   if (
-      //     typeOf(formRef.current._setInputProps) === TYPE_FUNCTION &&
-      //     !dontSetInputProps
-      //   )
-      //     formRef.current._setInputProps(
-      //       formRef.current.getInputProps(
-      //         formRef.current._extraProps || __formRef.current._extraProps
-      //       )
-      //     );
-      // });
+      setTimeout(() => {
+        if (
+          typeOf(formRef.current._setInputProps) === TYPE_FUNCTION &&
+          !dontSetInputProps
+        )
+          formRef.current._setInputProps(
+            formRef.current.getInputProps(
+              formRef.current._extraProps || __formRef.current._extraProps
+            )
+          );
+      });
     };
 
     const setErrors = (_errors, dontSetInputProps) => {
@@ -1404,15 +1419,20 @@ const formValidationHandler = ({
   };
 
   const useFormValidationHook = ({ renderForm, ...props }) => {
+    const valueRef = useRef({});
     const setRenderForm = useState()[1];
-    const initiateFormValidationHandler = (initialState, _initialErrors) =>
-      _formValidationHandler({
+
+    const initiateFormValidationHandler = (initialState, _initialErrors) => {
+      valueRef.current = initialState;
+      return _formValidationHandler({
         ...props,
         initialState,
         _initialErrors,
         renderFormCallback: setRenderForm,
         getFormData: renderForm ? setRenderForm : undefined,
       });
+    };
+
     const [{ formRef, formId }, setState] = useState(() =>
       initiateFormValidationHandler(props.initialState, props.initialErrors)
     );
@@ -1422,11 +1442,29 @@ const formValidationHandler = ({
 
     useEffect(() => formRef._onUnMountForm, [formRef]);
 
-    formRef.setInitialState = (_initialState, _initialErrors) => {
+    formRef._ref(IS_FORMREF).setInitialState = (
+      _initialState,
+      _initialErrors
+    ) => {
       setState(() =>
         initiateFormValidationHandler(_initialState, _initialErrors)
       );
     };
+
+    formRef._ref(IS_FORMREF).save = (is_init = true) => {
+      valueRef.current = { ...valueRef.current, ...formRef.getValues() };
+      if (is_init) formRef.init();
+    };
+
+    formRef._ref(IS_FORMREF).init = () => {
+      formRef.setInitialState(valueRef.current);
+    };
+
+    formRef._ref(IS_FORMREF).getFormValues = () => {
+      formRef.save(false);
+      return valueRef.current;
+    };
+
     return { formRef, formId };
   };
 
