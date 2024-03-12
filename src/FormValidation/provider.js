@@ -26,7 +26,10 @@ const getFormRef = (_formRef, id) => {
 };
 
 const checkFormRefIsValid = (formRef) => {
-  if (!formRef || formRef.constructor.name !== "FormRef") {
+  if (
+    !formRef
+    // || formRef.constructor.name !== "FormRef"
+  ) {
     throw new Error(
       "Invalid FormRef.Please use the formRef from the useFormHook"
     );
@@ -48,14 +51,16 @@ export default forwardRef(
     ref
   ) => {
     if (
-      (!_formRef && !id) ||
-      (_formRef && _formRef.constructor.name !== "FormRef")
+      !_formRef &&
+      !id
+      // || (_formRef && _formRef.constructor.name !== "FormRef")
     ) {
-      if (_formRef)
-        throw new Error(
-          "Invalid FormRef.Please use the formRef from the useFormHook"
-        );
-      else throw new Error("Required props 'formRef' or 'id' ");
+      // if (_formRef)
+      //   throw new Error(
+      //     "Invalid FormRef.Please use the formRef from the useFormHook"
+      //   );
+      // else
+      throw new Error("Required props 'formRef' or 'id' ");
     }
     const {
       formRef: __formRef,
@@ -199,10 +204,8 @@ export default forwardRef(
       };
     }, [formRef._formId_]);
 
-    rootFormRef._formRef.__formRef__.values =
-      rootFormRef._formRef.__formRef__.getValues();
-    rootFormRef._formRef.__formRef__.errors =
-      rootFormRef._formRef.__formRef__.getErrors();
+    rootFormRef._formRef.__formRef__.values = rootFormRef._formRef.__formRef__.getValues();
+    rootFormRef._formRef.__formRef__.errors = rootFormRef._formRef.__formRef__.getErrors();
 
     return (
       <FormContext.Provider

@@ -69,7 +69,10 @@ const _getFormRef = (_formRef, id) => {
 };
 
 const checkFormRefIsValid = (formRef) => {
-  if (!formRef || formRef.constructor.name !== "FormRef") {
+  if (
+    !formRef
+    // || formRef.constructor.name !== "FormRef"
+  ) {
     throw new Error(
       "Invalid FormRef.Please use the formRef from the useFormHook"
     );
@@ -89,14 +92,16 @@ export default forwardRef(
     ref
   ) => {
     if (
-      (!_formRef && !id) ||
-      (_formRef && _formRef.constructor.name !== "FormRef")
+      !_formRef &&
+      !id
+      // || (_formRef && _formRef.constructor.name !== "FormRef")
     ) {
-      if (_formRef)
-        throw new Error(
-          "Invalid FormRef.Please use the formRef from the useFormHook"
-        );
-      else throw new Error("Required props 'formRef' or 'id' ");
+      // if (_formRef)
+      //   throw new Error(
+      //     "Invalid FormRef.Please use the formRef from the useFormHook"
+      //   );
+      // else
+      throw new Error("Required props 'formRef' or 'id' ");
     }
 
     const {
@@ -304,8 +309,9 @@ export default forwardRef(
         valueRef.current.formRefArray[targetIndex] &&
         valueRef.current.formRefArray[targetIndex].formRef
       ) {
-        const value =
-          valueRef.current.formRefArray[targetIndex].formRef.getValues();
+        const value = valueRef.current.formRefArray[
+          targetIndex
+        ].formRef.getValues();
         onAddMultipleForm(Array(count).fill(value), sourceFormId, count);
       }
     };
@@ -463,10 +469,8 @@ export default forwardRef(
 
     formRef.formArrayProps = multiple;
 
-    rootFormRef._formRef.__formRef__.values =
-      rootFormRef._formRef.__formRef__.getValues();
-    rootFormRef._formRef.__formRef__.errors =
-      rootFormRef._formRef.__formRef__.getErrors();
+    rootFormRef._formRef.__formRef__.values = rootFormRef._formRef.__formRef__.getValues();
+    rootFormRef._formRef.__formRef__.errors = rootFormRef._formRef.__formRef__.getErrors();
 
     useEffect(
       () => () => {
@@ -494,12 +498,14 @@ export default forwardRef(
       return () => {
         if (rootRef.current.dontResetOnUnmount) {
           if (!formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState)
-            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState =
-              formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues;
+            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState = formRef._ref(
+              IS_FORMREF
+            )[IS_MULTIPLE]._initialValues;
           formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = getValues();
         } else {
-          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues =
-            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState;
+          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = formRef._ref(
+            IS_FORMREF
+          )[IS_MULTIPLE]._initialState;
         }
         if (idRef.current.id)
           if (!rootRef.current.dontResetOnUnmount) {
