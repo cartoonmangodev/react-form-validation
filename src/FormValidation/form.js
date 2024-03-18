@@ -134,8 +134,7 @@ const formValidationHandler = ({
 
     if (_isSchema_or_isMultiple_config_is_root) {
       /* formRef */
-      FormRef.prototype._isSchema_or_isMultiple_config_is_root =
-        _isSchema_or_isMultiple_config_is_root;
+      FormRef.prototype._isSchema_or_isMultiple_config_is_root = _isSchema_or_isMultiple_config_is_root;
     }
 
     FormRef.prototype[IS_MULTIPLE] = {
@@ -833,7 +832,8 @@ const formValidationHandler = ({
                   value: _commonInputProps[value],
                   error: _commonInputProps[error],
                   key,
-                }
+                },
+                formRef.current._extraProps || __formRef.current._extraProps
               )
             : INITIAL_FORM_CONFIG.inputProps)) ||
           {}),
@@ -928,8 +928,9 @@ const formValidationHandler = ({
                 : {
                     [key]: val[IS_MULTIPLE]
                       ? (() => {
-                          const _data =
-                            formRef.current._schema[key].formRef[method]();
+                          const _data = formRef.current._schema[key].formRef[
+                            method
+                          ]();
                           return Array.isArray(_data) ? _data : [];
                         })()
                       : formRef.current._schema[key].formRef[method](),
