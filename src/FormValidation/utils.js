@@ -49,12 +49,11 @@ export const _setInitialValues = ({
   // if (Object.keys(_initialValues).length) {
   //   return _initialValues;
   // }
-  const _values = (
-    isMultiple
-      ? Array.isArray(_initialValues)
-        ? _initialValues
-        : [_initialValues]
+  const _values = (isMultiple
+    ? Array.isArray(_initialValues)
+      ? _initialValues
       : [_initialValues]
+    : [_initialValues]
   ).reduce(
     (acc, initialValues) => {
       if (formConfig[IS_MULTIPLE]) return [];

@@ -150,7 +150,7 @@ const newSchema = config => {
   };
 };
 const newFormArray = config => {
-  if (config[IS_MULTIPLE]) checkKey(false, "(newMultiple) Invalid form schema", "object");
+  if (config[IS_MULTIPLE]) checkKey(false, "(newFormArray) Invalid form schema", "object");
   return {
     [IS_MULTIPLE]: true,
     [SCHEMA_CONFIG]: config[IS_SCHEMA] ? config._config : config
