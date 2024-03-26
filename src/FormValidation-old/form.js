@@ -9,7 +9,6 @@ import {
 } from "../constants";
 
 import isEqual from "fast-deep-equal";
-import debounce from "lodash.debounce";
 
 import {
   _deepCopy,
@@ -56,8 +55,6 @@ const checkKey = (key) => {
     );
 };
 
-const DEBOUNCE_TIME = 5;
-const ALLOW_WITHOUT_INITIATED = false;
 const formValidationHandler = ({
   ON_CHANGE_KEY: _ON_CHANGE_KEY,
   ON_BLUR_KEY: _ON_BLUR_KEY,
@@ -92,7 +89,6 @@ const formValidationHandler = ({
     const formRef = {
       current: new FormRef(),
     };
-    formRef.current._last_validated_errors = {};
     FormRef.prototype.is_validate_form_triggered = false;
     FormRef.prototype._schema = {};
     FormRef.prototype._formRef = {};
@@ -138,8 +134,7 @@ const formValidationHandler = ({
 
     if (_isSchema_or_isMultiple_config_is_root) {
       /* formRef */
-      FormRef.prototype._isSchema_or_isMultiple_config_is_root =
-        _isSchema_or_isMultiple_config_is_root;
+      FormRef.prototype._isSchema_or_isMultiple_config_is_root = _isSchema_or_isMultiple_config_is_root;
     }
 
     FormRef.prototype[IS_MULTIPLE] = {
@@ -279,7 +274,7 @@ const formValidationHandler = ({
 
     FormRef.prototype.formConfig = formConfig;
 
-    const _onFormChangeCallback = debounce((dontRender) => {
+    const _onFormChangeCallback = (dontRender) => {
       if (__formRef.current.getValues) {
         formRef.current.values = formRef.current.getValues();
         formRef.current.errors = formRef.current.getErrors();
@@ -299,7 +294,6 @@ const formValidationHandler = ({
       }
       if (typeOf(onFormChangeCallback) === TYPE_FUNCTION && !dontRender) {
         // setTimeout(() => {
-
         const ___formRef = _rootRef || __formRef;
         if (___formRef.current.getValues) {
           const _data = {
@@ -307,15 +301,14 @@ const formValidationHandler = ({
             errors: ___formRef.current.getErrors(),
             formConfig: ___formRef.current.getFormConfig(),
           };
-          if (!isEqual(_data, __formRef.current._previousData)) {
-            __formRef.current._ref(IS_FORMREF)._previousData = _data;
+          if (!isEqual(_data, __formRef.current.oldData)) {
+            __formRef.current.oldData = _data;
             onFormChangeCallback(_data);
           }
         }
-
         // });
       }
-    }, DEBOUNCE_TIME);
+    };
 
     const _resetSchema = (_config) => {
       (Array.isArray(_config) ? _config : Object.keys(_config)).reduce(
@@ -437,7 +430,7 @@ const formValidationHandler = ({
 
       if (
         (typeof config.validate === "boolean" ? config.validate : true) &&
-        (config._initiated || ALLOW_WITHOUT_INITIATED) &&
+        config._initiated &&
         (typeof config.isValidateOnChange === "boolean"
           ? config.isValidateOnChange
           : true)
@@ -640,8 +633,7 @@ const formValidationHandler = ({
       }
       // if (isSetError) setFormErrors(_errors);
       formRef.current.is_validate_form_triggered = false;
-
-      const obj = {
+      return {
         values: PRIMITIVE_VALUE in _values ? _values[PRIMITIVE_VALUE] : _values,
         errors: PRIMITIVE_VALUE in _errors ? _errors[PRIMITIVE_VALUE] : _errors,
         totalErrorCount: isError.length,
@@ -649,15 +641,6 @@ const formValidationHandler = ({
         isError: isError.length > 0,
         isValidatePassed: isError.length === 0,
       };
-
-      formRef.current._last_validated_errors = {
-        errorCount: obj.errorCount,
-        isError: obj.isError,
-        isValidatePassed: obj.isValidatePassed,
-        totalErrorCount: obj.totalErrorCount,
-      };
-
-      return obj;
     };
 
     const validateForm = (props) => {
@@ -670,13 +653,11 @@ const formValidationHandler = ({
           )
             return acc;
 
-          const _formRef = val.formRef[IS_MULTIPLE].validateForm
-            ? val.formRef[IS_MULTIPLE]
-            : val.formRef;
+          let obj2 = val.formRef[IS_MULTIPLE].validateForm
+            ? val.formRef[IS_MULTIPLE].validateForm(props)
+            : val.formRef.validateForm(props);
 
-          let obj2 = _formRef.validateForm(props);
-
-          const obj3 = {
+          return {
             errorCount: acc.errorCount + obj2.errorCount,
             isError: acc.isError || obj2.isError,
             isValidatePassed: acc.isValidatePassed || obj2.isValidatePassed,
@@ -688,15 +669,6 @@ const formValidationHandler = ({
               [key]: obj2.values,
             }),
           };
-
-          formRef.current._last_validated_errors = {
-            errorCount: obj3.errorCount,
-            isError: obj3.isError,
-            isValidatePassed: obj3.isValidatePassed,
-            totalErrorCount: obj3.totalErrorCount,
-          };
-
-          return obj3;
         },
         obj
       );
@@ -956,8 +928,9 @@ const formValidationHandler = ({
                 : {
                     [key]: val[IS_MULTIPLE]
                       ? (() => {
-                          const _data =
-                            formRef.current._schema[key].formRef[method]();
+                          const _data = formRef.current._schema[key].formRef[
+                            method
+                          ]();
                           return Array.isArray(_data) ? _data : [];
                         })()
                       : formRef.current._schema[key].formRef[method](),
@@ -1056,9 +1029,8 @@ const formValidationHandler = ({
         __config[_key].validate = _value;
         if (!_value) __errors[_key] = null;
       });
-      setFormConfig(__config, Object.keys(_config), false);
+      setFormConfig(__config, Object.keys(_config));
       setErrors(__errors);
-      validateFields(Object.keys(_config));
     };
 
     const setOptional = (_config = {}) => {
@@ -1069,7 +1041,7 @@ const formValidationHandler = ({
         __config[_key].isRequired = false;
         __errors[_key] = null;
       });
-      setFormConfig(__config, Object.keys(_config), false);
+      setFormConfig(__config, Object.keys(_config));
       setErrors(__errors);
       validateFields(Object.keys(_config));
     };
@@ -1082,7 +1054,7 @@ const formValidationHandler = ({
         __config[_key].optional = false;
         __errors[_key] = null;
       });
-      setFormConfig(__config, Object.keys(_config), false);
+      setFormConfig(__config, Object.keys(_config));
       setErrors(__errors);
       validateFields(Object.keys(_config));
     };
@@ -1100,18 +1072,16 @@ const formValidationHandler = ({
             const _isSchema =
               val[IS_SCHEMA] || val._formId_ || val[IS_MULTIPLE];
             if (
-              ((!_isSchema && !(val._initiated || ALLOW_WITHOUT_INITIATED)) ||
+              ((!_isSchema && !val._initiated) ||
                 (_isSchema &&
                   !(
                     formRef.current._schema[key] &&
-                    (formRef.current._schema[key].formRef._is_form_initiated ||
-                      ALLOW_WITHOUT_INITIATED)
+                    formRef.current._schema[key].formRef._is_form_initiated
                   ))) &&
               !_isSchema_or_isMultiple_config_is_root
             )
               return acc;
-            if (!_isSchema && !(val._initiated || ALLOW_WITHOUT_INITIATED))
-              return acc;
+            if (!_isSchema && !val._initiated) return acc;
 
             let _value = val[IS_MULTIPLE]
               ? errors[key]
@@ -1150,12 +1120,11 @@ const formValidationHandler = ({
           const _isSchema = val[IS_SCHEMA] || val._formId_ || val[IS_MULTIPLE];
 
           if (
-            ((!_isSchema && !(val._initiated || ALLOW_WITHOUT_INITIATED)) ||
+            ((!_isSchema && !val._initiated) ||
               (_isSchema &&
                 !(
                   formRef.current._schema[key] &&
-                  (formRef.current._schema[key].formRef._is_form_initiated ||
-                    ALLOW_WITHOUT_INITIATED)
+                  formRef.current._schema[key].formRef._is_form_initiated
                 ))) &&
             !_isSchema_or_isMultiple_config_is_root
           )

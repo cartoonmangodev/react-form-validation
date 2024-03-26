@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/no-anonymous-default-export */
 /* eslint-disable react/display-name */
 import { useContext, useEffect, useRef } from "react";
@@ -12,27 +11,16 @@ const ID_KEY = "id";
 
 export default (props = {}) => {
   const ref = useRef({});
-  const {
-    inputProps = {},
-    idKey,
-    onSubmit,
-    setInputProps,
-    extraProps,
-  } = useContext(FormContext) || {};
+  const { inputProps = {}, idKey, onSubmit, setInputProps, extraProps } =
+    useContext(FormContext) || {};
 
-  const {
-    render,
-    inputConfig: _inputConfig,
-    ...commonInputProps
-  } = useContext(FormControllerContext) || {};
+  const { render, inputConfig: _inputConfig, ...commonInputProps } =
+    useContext(FormControllerContext) || {};
 
   const inputConfig = { ...props.inputConfig, ..._inputConfig };
 
-  const {
-    formRef,
-    renderForm,
-    _rootRef: rootRef,
-  } = useContext(FormRefContext) || {};
+  const { formRef, renderForm, _rootRef: rootRef } =
+    useContext(FormRefContext) || {};
 
   if (!formRef) return { inputProps: {} };
 
@@ -124,23 +112,8 @@ export default (props = {}) => {
 
   useEffect(() => {
     setInputProps();
-    console.log(formRef);
-  }, [formRef._formId_]);
-
-  useEffect(() => {
-    if (
-      typeof formRef._formConfig[props[idKey || ID_KEY]].validate === false &&
-      props.dontValidateOnUnmount
-    )
-      formRef.setValidate({
-        [props[idKey || ID_KEY]]: true,
-      });
-  }, [formRef._formId_, props[idKey || ID_KEY], props.dontValidateOnUnmount]);
-
-  useEffect(() => {
     return () => {
-      console.log(props.dontValidateOnUnmount);
-      if (props.resetOnUnmount) {
+      if (!rootRef.current.dontResetOnUnmount) {
         if (_inputFieldProps._fieldConfig) {
           _inputFieldProps._fieldConfig._initiated = false;
           if (typeOf(inputConfig) === TYPE_OBJECT)
@@ -158,18 +131,9 @@ export default (props = {}) => {
           );
           inputProps[IS_SCHEMA].onFormChangeCallback();
         }
-      } else if (props.dontValidateOnUnmount) {
-        formRef.setValidate({
-          [props[idKey || ID_KEY]]: false,
-        });
       }
     };
-  }, [
-    formRef._formId_,
-    props.resetOnUnmount,
-    props.dontValidateOnUnmount,
-    props[idKey || ID_KEY],
-  ]);
+  }, [formRef._formId_]);
 
   ref.current.inputConfig = inputConfig;
 

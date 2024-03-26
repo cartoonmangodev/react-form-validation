@@ -32,7 +32,7 @@ const generateNewFormRef = (
   isMultiple
 ) => {
   const __values =
-    typeOf(_values) === TYPE_OBJECT || _values === undefined || _values === null
+    typeOf(_values) === TYPE_OBJECT || _values === undefined
       ? _values
       : {
           [PRIMITIVE_VALUE]: _values,
@@ -168,34 +168,8 @@ export default forwardRef(
     };
 
     const generate = () => {
-      const values =
-        formRef.getValues && formRef.getValues().length
-          ? formRef.getValues()
-          : formRef[IS_MULTIPLE]._initialValues;
-
-      let _formArrayRef = [];
-      if (values.length > 0) {
-        _formArrayRef = values.map((_values, _index) => {
-          if (formRef[IS_MULTIPLE]?._formRefArray?.[_index]?.formRef) {
-            const _existingFormRef =
-              formRef[IS_MULTIPLE]?._formRefArray?.[_index];
-            console.log(
-              formRef[IS_MULTIPLE]?._formRefArray?.[_index].formRef.values
-            );
-            return _existingFormRef;
-          }
-          return generateNewFormRef(
-            formRef,
-            _values,
-            ___formRef,
-            rootFormRef,
-            !!___formRef._multipleConfig
-          );
-        });
-      } else {
-        _formArrayRef = [
-          ...Array(typeof defaultCount === "number" ? defaultCount : 0),
-        ].map((_values) =>
+      if (formRef[IS_MULTIPLE]._initialValues.length > 0) {
+        return formRef[IS_MULTIPLE]._initialValues.map((_values) =>
           generateNewFormRef(
             formRef,
             _values,
@@ -205,12 +179,19 @@ export default forwardRef(
           )
         );
       }
-      if (formRef[IS_MULTIPLE])
-        formRef[IS_MULTIPLE]._formRefArray = _formArrayRef;
-      return _formArrayRef;
+      return [
+        ...Array(typeof defaultCount === "number" ? defaultCount : 0),
+      ].map((_values) =>
+        generateNewFormRef(
+          formRef,
+          _values,
+          ___formRef,
+          rootFormRef,
+          !!___formRef._multipleConfig
+        )
+      );
     };
     const [formRefArray, setFormRefArray] = useState(() => generate());
-
     valueRef.current.formRefArray = formRefArray;
 
     const formIdIndex = {};
@@ -246,11 +227,11 @@ export default forwardRef(
             ___val.splice(currentIndex, 1);
             ___val.splice(targetIndex, 0, __value);
           }
-          if (formRef[IS_MULTIPLE]) formRef[IS_MULTIPLE]._formRefArray = ___val;
           return ___val;
         });
       }
     }, []);
+
     const onSwapForm = useCallback((sourceFormId, targetFormId) => {
       const currentIndex = valueRef.current.formIdIndex[sourceFormId];
       const targetIndex = valueRef.current.formIdIndex[targetFormId];
@@ -273,7 +254,6 @@ export default forwardRef(
             ___val.splice(currentIndex, 1, __value2);
             ___val.splice(targetIndex, 1, __value);
           }
-          if (formRef[IS_MULTIPLE]) formRef[IS_MULTIPLE]._formRefArray = ___val;
           return ___val;
         });
     }, []);
@@ -307,10 +287,7 @@ export default forwardRef(
           );
           if (typeof startIndex === "number")
             __val.splice(startIndex, 0, ..._newFormRef);
-          else {
-            __val = __val.concat(_newFormRef);
-          }
-          if (formRef[IS_MULTIPLE]) formRef[IS_MULTIPLE]._formRefArray = __val;
+          else __val.concat(_newFormRef);
           return __val;
         });
     };
@@ -332,8 +309,9 @@ export default forwardRef(
         valueRef.current.formRefArray[targetIndex] &&
         valueRef.current.formRefArray[targetIndex].formRef
       ) {
-        const value =
-          valueRef.current.formRefArray[targetIndex].formRef.getValues();
+        const value = valueRef.current.formRefArray[
+          targetIndex
+        ].formRef.getValues();
         onAddMultipleForm(Array(count).fill(value), sourceFormId, count);
       }
     };
@@ -341,13 +319,8 @@ export default forwardRef(
     const onDeleteMultipleForm = (deleteKey = []) => {
       if (deleteKey.length > 0)
         setFormRefArray((_options) => {
-          let __options = _options.slice();
-          __options = __options.filter(
-            ({ formId }) => !deleteKey.includes(formId)
-          );
-          if (formRef[IS_MULTIPLE])
-            formRef[IS_MULTIPLE]._formRefArray = __options;
-          return __options;
+          const __options = _options.slice();
+          return __options.filter(({ formId }) => !deleteKey.includes(formId));
         });
     };
 
@@ -370,10 +343,7 @@ export default forwardRef(
           .map((_value) =>
             generateNewFormRef(formRef, _value, ___formRef, rootFormRef)
           );
-        const _formRefArray = valueRef.current.formRefArray.concat(_formArray);
-        if (formRef[IS_MULTIPLE])
-          formRef[IS_MULTIPLE]._formRefArray = _formRefArray;
-        setFormRefArray(_formRefArray);
+        setFormRefArray(valueRef.current.formRefArray.concat(_formArray));
       }
       return valueRef.current.formRefArray.map(({ formRef }, _i) =>
         formRef.setInitialFormData(value[_i] || {}, isResetValue)
@@ -499,10 +469,8 @@ export default forwardRef(
 
     formRef.formArrayProps = multiple;
 
-    rootFormRef._formRef.__formRef__.values =
-      rootFormRef._formRef.__formRef__.getValues();
-    rootFormRef._formRef.__formRef__.errors =
-      rootFormRef._formRef.__formRef__.getErrors();
+    rootFormRef._formRef.__formRef__.values = rootFormRef._formRef.__formRef__.getValues();
+    rootFormRef._formRef.__formRef__.errors = rootFormRef._formRef.__formRef__.getErrors();
 
     useEffect(
       () => () => {
@@ -517,36 +485,35 @@ export default forwardRef(
       formRef._ref(IS_FORMREF)._is_form_initiated = true;
       formRef._renderForm();
       formRef.renderForm();
-
-      /** @TODO */
-      // return () => {
-      //   if (!rootRef.current.dontResetOnUnmount) {
-      //     formRef._ref(IS_FORMREF)._is_form_initiated = false;
-      //     formRef._renderForm();
-      //     formRef.renderForm();
-      //   }
-      // };
+      return () => {
+        if (!rootRef.current.dontResetOnUnmount) {
+          formRef._ref(IS_FORMREF)._is_form_initiated = false;
+          formRef._renderForm();
+          formRef.renderForm();
+        }
+      };
     }, [formRef._formId_]);
 
-    /** @TODO */
-    // useEffect(() => {
-    //   return () => {
-    //     if (rootRef.current.dontResetOnUnmount) {
-    //       if (!formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState)
-    //         formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState =
-    //           formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues;
-    //       formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = getValues();
-    //     } else {
-    //       formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues =
-    //         formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState;
-    //     }
-    //     if (idRef.current.id)
-    //       if (!rootRef.current.dontResetOnUnmount) {
-    //         _thisFormRef.deleteFormConfig([idRef.current.id]);
-    //         // _thisFormRef.renderForm();
-    //       }
-    //   };
-    // }, [_thisFormRef._formId_]);
+    useEffect(() => {
+      return () => {
+        if (rootRef.current.dontResetOnUnmount) {
+          if (!formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState)
+            formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialState = formRef._ref(
+              IS_FORMREF
+            )[IS_MULTIPLE]._initialValues;
+          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = getValues();
+        } else {
+          formRef._ref(IS_FORMREF)[IS_MULTIPLE]._initialValues = formRef._ref(
+            IS_FORMREF
+          )[IS_MULTIPLE]._initialState;
+        }
+        if (idRef.current.id)
+          if (!rootRef.current.dontResetOnUnmount) {
+            _thisFormRef.deleteFormConfig([idRef.current.id]);
+            // _thisFormRef.renderForm();
+          }
+      };
+    }, [_thisFormRef._formId_]);
 
     if (!formRef._ref(IS_FORMREF)._setRenderForm)
       formRef._ref(IS_FORMREF)._setRenderForm = ___formRef._setRenderForm;
@@ -592,7 +559,6 @@ export default forwardRef(
         ref.current.form = _props;
         ref.current.formId = formRef._formId_;
         ref.current.multiple = multiple;
-        ref.current.formRef = formRef;
       }
       return {
         ..._props,

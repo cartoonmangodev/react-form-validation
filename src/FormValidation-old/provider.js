@@ -168,27 +168,25 @@ export default forwardRef(
       []
     );
 
-    /** @TODO */
-    // useEffect(() => {
-    //   return () => {
-    //     if (!rootRef.current.dontResetOnUnmount) {
-    //       if (formRef && formRef._ref(IS_FORMREF)._setInputProps)
-    //         delete formRef._ref(IS_FORMREF)._setInputProps;
-    //       if (formRef && formRef._ref(IS_FORMREF)._extraProps)
-    //         delete formRef._ref(IS_FORMREF)._extraProps;
-    //     }
-    //   };
-    // }, [formRef._formId_]);
+    useEffect(() => {
+      return () => {
+        if (!rootRef.current.dontResetOnUnmount) {
+          if (formRef && formRef._ref(IS_FORMREF)._setInputProps)
+            delete formRef._ref(IS_FORMREF)._setInputProps;
+          if (formRef && formRef._ref(IS_FORMREF)._extraProps)
+            delete formRef._ref(IS_FORMREF)._extraProps;
+        }
+      };
+    }, [formRef._formId_]);
 
-    /** @TODO */
-    // useEffect(() => {
-    //   return () => {
-    //     if (idRef.current.id && !rootRef.current.dontResetOnUnmount) {
-    //       ___formRef.deleteFormConfig([idRef.current.id]);
-    //       _ref.current.__setRefresh({});
-    //     }
-    //   };
-    // }, [___formRef._formId_]);
+    useEffect(() => {
+      return () => {
+        if (idRef.current.id && !rootRef.current.dontResetOnUnmount) {
+          ___formRef.deleteFormConfig([idRef.current.id]);
+          _ref.current.__setRefresh({});
+        }
+      };
+    }, [___formRef._formId_]);
 
     if (formRef && formRef._formId_)
       formRef._ref(IS_FORMREF)._extraProps = __extraProps;
@@ -197,21 +195,17 @@ export default forwardRef(
       formRef._ref(IS_FORMREF)._is_form_initiated = true;
       formRef._renderForm();
       formRef.renderForm();
-
-      /** @TODO */
-      // return () => {
-      //   if (!rootRef.current.dontResetOnUnmount) {
-      //     formRef._ref(IS_FORMREF)._is_form_initiated = false;
-      //     formRef._renderForm();
-      //     formRef.renderForm();
-      //   }
-      // };
+      return () => {
+        if (!rootRef.current.dontResetOnUnmount) {
+          formRef._ref(IS_FORMREF)._is_form_initiated = false;
+          formRef._renderForm();
+          formRef.renderForm();
+        }
+      };
     }, [formRef._formId_]);
 
-    rootFormRef._formRef.__formRef__.values =
-      rootFormRef._formRef.__formRef__.getValues();
-    rootFormRef._formRef.__formRef__.errors =
-      rootFormRef._formRef.__formRef__.getErrors();
+    rootFormRef._formRef.__formRef__.values = rootFormRef._formRef.__formRef__.getValues();
+    rootFormRef._formRef.__formRef__.errors = rootFormRef._formRef.__formRef__.getErrors();
 
     return (
       <FormContext.Provider
