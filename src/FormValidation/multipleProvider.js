@@ -179,9 +179,7 @@ export default forwardRef(
           if (formRef[IS_MULTIPLE]?._formRefArray?.[_index]?.formRef) {
             const _existingFormRef =
               formRef[IS_MULTIPLE]?._formRefArray?.[_index];
-            console.log(
-              formRef[IS_MULTIPLE]?._formRefArray?.[_index].formRef.values
-            );
+
             return _existingFormRef;
           }
           return generateNewFormRef(
@@ -599,6 +597,21 @@ export default forwardRef(
         form: _props,
       };
     };
+    const ChildrenComponentWithProps = (_ref, _i) => {
+      const _props = [
+        {
+          ..._ref,
+          ..._formRefProps(_i, _ref.formRef),
+          index: _i,
+        },
+        _multipleProps,
+        _i,
+      ];
+      return typeof children === "function"
+        ? children(..._props)
+        : React.cloneElement(children, { formProps: _props }, null);
+    };
+
     return (
       <FormContext.Provider
         value={{ formId: _thisFormRef._formId_, setInputProps }}
@@ -618,19 +631,7 @@ export default forwardRef(
             ? typeof children === "function"
               ? children(formRefArray, _multipleProps)
               : children
-            : formRefArray.map((_ref, _i) =>
-                typeof children === "function"
-                  ? children(
-                      {
-                        ..._ref,
-                        ..._formRefProps(_i, _ref.formRef),
-                        index: _i,
-                      },
-                      _multipleProps,
-                      _i
-                    )
-                  : children
-              )}
+            : formRefArray.map(ChildrenComponentWithProps)}
         </FormRefContext.Provider>
       </FormContext.Provider>
     );

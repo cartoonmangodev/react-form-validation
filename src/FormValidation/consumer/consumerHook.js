@@ -124,7 +124,6 @@ export default (props = {}) => {
 
   useEffect(() => {
     setInputProps();
-    console.log(formRef);
   }, [formRef._formId_]);
 
   useEffect(() => {
@@ -139,7 +138,6 @@ export default (props = {}) => {
 
   useEffect(() => {
     return () => {
-      console.log(props.dontValidateOnUnmount);
       if (props.resetOnUnmount) {
         if (_inputFieldProps._fieldConfig) {
           _inputFieldProps._fieldConfig._initiated = false;
